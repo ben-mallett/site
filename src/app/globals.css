@@ -85,6 +85,12 @@
     h4 {
       @apply scroll-m-20 text-xl font-semibold tracking-tight
     }
+    label {
+      @apply text-xl
+    }
+    p {
+      @apply text-2xl
+    }
     .hover-enlarge-sm {
       @apply transition duration-300 hover:scale-105 focus:outline-none focus:scale-105 hover:cursor-pointer;
     }
@@ -93,5 +99,15 @@
     }
     .hover-enlarge-xl {
       @apply transition duration-300 hover:scale-150 focus:outline-none focus:scale-150 hover:cursor-pointer;
+    }
+
+    .hover-shadow-sm {
+      @apply transition shadow-[2px_4px_0px_rgb(0,0,0)] hover:shadow-[0px_0px_0px_rgb(0,0,0)] ease-out hover:translate-y-1 hover:translate-x-1 transition-all
+    }
+    .hover-shadow-lg {
+      @apply transition shadow-[2px_6px_0px_rgb(0,0,0)] hover:shadow-[0px_0px_0px_rgb(0,0,0)] ease-out hover:translate-y-1 hover:translate-x-1 transition-all
+    }
+    .hover-shadow-xl {
+      @apply transition shadow-[4px_8px_0px_rgb(0,0,0)] hover:shadow-[0px_0px_0px_rgb(0,0,0)]  ease-out hover:translate-y-1 hover:translate-x-1 transition-all
     }
   }

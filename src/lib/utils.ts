@@ -25,7 +25,7 @@ const bgColors = [
 ]
 
 const links = [
-  "/arcade/conway",
+  "/showcase/conway",
   "/blog/conway",
   "/blog/helloworld"
 ]

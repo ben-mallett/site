@@ -42,7 +42,7 @@ export default function GamesPage() {
                             const bgColor = getRandomBgColor();
                             return (
                                 <Link href={`blog/${post.slug}`}>
-                                    <div key={i} className={`w-full h-96 border border-black border-4 hover-enlarge-sm flex flex-col justify-start items-center ${bgColor}`}>
+                                    <div key={i} className={`w-full h-96 border border-black border-4 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
                                         <h3 className="p-5">{post.title}</h3>
                                         <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>Authors: {post.authors.map((author : string) => <span>{`${author}`}</span>)}</h4>
                                         <h4 className="p-5">{post.description}</h4>
