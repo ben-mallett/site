@@ -184,60 +184,59 @@ const Conway = ({ width, height }: ConwayProps) => {
         })
     }
 
-    
+    /**
+     * Handles a mouse movement event by drawing cells as active if in drawing mode
+     */
+    const handleMouseMove = (e: any, i: number) => {
+        e.preventDefault()
+        if (drawing) {
+            setGrid((grid) => {
+                const newGrid = [...grid]
+                newGrid[i] = 1
+                return newGrid
+            })
+        }
+    }
+
+    const handleMouseUp = (e: any) => {
+        e.preventDefault()
+        setDrawing(false)
+        setPause(prevPause)
+    }
+
     /**
      * Reinitialize the grid on dimension changes
-    */
-   useEffect(() => {
-       initGrid()
-    }, [width, height, sparsity, resolution, initGrid])
-    
-    
+     */
+    useEffect(() => {
+        initGrid()
+    }, [width, height, sparsity, resolution])
+
+
     /**
      * Sets an interval to update the grid on 
-    */
-   useEffect(() => {
-       const iid = setInterval(() => {
-           if (!pause) {
-               updateGrid();
+     */
+    useEffect(() => {
+        const iid = setInterval(() => {
+            if (!pause) {
+                updateGrid();
             }
         }, tickRate);
-        
+
         return () => clearInterval(iid);
-    }, [rowSize, colSize, updateGrid, tickRate, pause, updateGrid])
-    
+    }, [rowSize, colSize, updateGrid, tickRate, pause])
+
     const gridCells = useMemo(() => {
-        /**
-         * Handles a mouse movement event by drawing cells as active if in drawing mode
-         */
-        const handleMouseMove = (e: any, i: number) => {
-            e.preventDefault()
-            if (drawing) {
-                setGrid((grid) => {
-                    const newGrid = [...grid]
-                    newGrid[i] = 1
-                    return newGrid
-                })
-            }
-        }
-    
-        const handleMouseUp = (e: any) => {
-            e.preventDefault()
-            setDrawing(false)
-            setPause(prevPause)
-        }
-        
         return grid.map((cell, i) => {
             const bgColor = cell === 1 ? (colorSwap ? 'bg-white' : activeColor) : (colorSwap ? activeColor : 'bg-white');
             const textColor = cell === 1 ? (colorSwap ? activeTextColor : 'text-white') : (colorSwap ? 'text-white' : activeTextColor);
             return (
                 <div 
-                key={i} 
-                className={`flex ${rounded ? 'rounded-full' : ''} justify-center items-center ${bgColor} ${textColor}`} 
-                style={{ width: `${resolution}px`, height: `${resolution}px`}}
-                onMouseDown={(e) => handleMouseDown(e, i)}
-                onMouseUp={(e) => handleMouseUp(e)} 
-                onMouseMove={(e) => handleMouseMove(e, i)} 
+                    key={i} 
+                    className={`flex ${rounded ? 'rounded-full' : ''} justify-center items-center ${bgColor} ${textColor}`} 
+                    style={{ width: `${resolution}px`, height: `${resolution}px`}}
+                    onMouseDown={(e) => handleMouseDown(e, i)}
+                    onMouseUp={(e) => handleMouseUp(e)} 
+                    onMouseMove={(e) => handleMouseMove(e, i)} 
                     onTouchStart={(e) => handleMouseDown(e, i)}
                     onTouchMove={(e) => handleMouseMove(e, i)}
                     onTouchEnd={(e) => handleMouseUp(e)}
