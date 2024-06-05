@@ -3,7 +3,7 @@
 import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import "axios";
+import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Home() {
