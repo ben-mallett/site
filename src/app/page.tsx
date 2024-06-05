@@ -1,54 +1,14 @@
-"use client"
-
 import { Header } from "@/components/Header";
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { getRandomBgColor } from "@/lib/utils";
+import { getAllPosts, getAllShowcaseItems } from "@/lib/api";
 
-export default function Home() {
-  const { toast } = useToast()
-  const [posts, setPosts] = useState<any[]>([]);
-  const [showcaseItems, setShowcaseItems] = useState<any[]>([]);
-
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const response = await axios.get("/api/posts");
-        const postsResponse = response.data.blogposts;
-        setPosts(postsResponse.slice(0, 3))
-      } catch (error : any) {
-        toast({
-            title: "Error fetching blog posts",
-            description: `${error.response.data.message ?? error}`
-        })
-      }
-    }
-
-    getPosts().catch((e) => {
-        console.log(e)
-    });
-  }, [toast])
-
-  useEffect(() => {
-    const getShowcaseItems = async () => {
-        try {
-            const response = await axios.get("/api/showcase");
-            const showcaseResponse = response.data.showcaseItems;
-            setShowcaseItems(showcaseResponse.slice(0,3))
-        } catch (error : any) {
-            toast({
-                title: "Error fetching showcase items",
-                description: `${error.response.data.message ?? error}`
-            })
-        }
-    }
-
-    getShowcaseItems().catch((e) => {
-        console.log(e)
-    });
-  }, [toast])
+export default async function Home() {
+  const postsFull = await getAllPosts()
+  const postsPreview = postsFull.slice(0, 3)
+  const showcaseItemsFull = await getAllShowcaseItems()
+  const showcasePreview = showcaseItemsFull.slice(0, 3)
 
   return (
     <main>
@@ -74,12 +34,12 @@ export default function Home() {
         <div className="flex flex-col lg:flex-row justify-start items-start gap-10">
           <div className="flex flex-col justify-start items-center pt-10">
             <h2>Recent Blogposts</h2>
-            <div className="grid grid-cols-2 justify-center items-center gap-6 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-6 p-6">
               {
-                posts.map((post, i) => {
+                postsPreview.map((post, i) => {
                   const bgColor = getRandomBgColor()
                   return (
-                    <Link key={i} href={`/blog/${post.slug}`}>
+                    <Link key={i} href={`/blog/${post.id}`}>
                       <div className={`w-[200px] h-[200px] border border-black border-2 hover-shadow-sm flex justify-center items-center ${bgColor} text-2xl`}>
                         {post.title}
                       </div>
@@ -98,9 +58,9 @@ export default function Home() {
           </div>
           <div className="flex flex-col justify-start items-center pt-10">
             <h2>Recent Projects</h2>
-            <div className="grid grid-cols-2 justify-center items-center gap-6 p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-6 p-6">
               {
-                showcaseItems.map((showcase, i) => {
+                showcasePreview.map((showcase, i) => {
                   const bgColor = getRandomBgColor()
                   return (
                     <Link key={i} href={`/showcase/${showcase.slug}`}>

@@ -8,17 +8,22 @@ import { Slider } from './ui/slider';
 type ConwayProps = {
     width: number;
     height: number;
+    settings: boolean;
 }
 
-export const WindowConway = () => {
+type WindowConwayProps = {
+    settings: boolean;
+}
+
+export const WindowConway = ({settings} : WindowConwayProps) => {
     const {width, height} = useWindowDimensions()
 
     return (
-        <Conway width={width} height={height}/>
+        <Conway width={width} height={height} settings={settings}/>
     )
 }
 
-const Conway = ({ width, height }: ConwayProps) => {
+const Conway = ({ width, height, settings }: ConwayProps) => {
     const [grid, setGrid] = useState<number[]>([])
     const [rowSize, setRowSize] = useState<number>(0)
     const [colSize, setColSize] = useState<number>(0)
@@ -251,7 +256,7 @@ const Conway = ({ width, height }: ConwayProps) => {
     return (
         <div className={`w-screen h-screen flex justify-center items-center ${colorSwap ? activeColor : 'bg-white'}`} onMouseDown={(e) => e.preventDefault()} onMouseMove={(e) => e.preventDefault()} onMouseUp={(e) => {e.preventDefault(); setDrawing(false)}}>
             {
-                !settingsOpen && 
+                settings && !settingsOpen && 
                 <div className="flex justify-between gap-2 absolute top-0 left-0 mx-20 my-10 z-50">
                     <button className="hover-enlarge-sm border border-black border-2 bg-sky-400 opacity-90 px-1 " onClick={() => setSettingsOpen(true)}>
                         Open Settings
@@ -259,7 +264,7 @@ const Conway = ({ width, height }: ConwayProps) => {
                 </div>
             }
             { 
-                settingsOpen && 
+                settings && settingsOpen && 
                 <div className={`absolute top-0 left-0 px-10 py-5 mx-10 my-5 z-50 bg-white opacity-90 w-72 md:w-96`}>
                     <div className="flex justify-between items-center pb-2">
                         <button title="Close Settings" className="hover-enlarge-sm border border-black border-2 px-1 bg-purple-700" onClick={() => setSettingsOpen(false)}>
@@ -268,9 +273,6 @@ const Conway = ({ width, height }: ConwayProps) => {
                         <div className="w-full h-full flex justify-end gap-2">
                             <a title="Go Back Home" className='hover-enlarge-sm bg-amber-300 opacity-90 border border-black border-2 px-1' href="/">
                                 Home
-                            </a>
-                            <a title="Visit Conway's Game of Life Blogpost" className='hover-enlarge-sm bg-emerald-400 opacity-90 border border-black border-2 px-1' href="/blog/conway">
-                                Blog Post
                             </a>
                         </div>
                     </div>

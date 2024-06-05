@@ -3,6 +3,7 @@
 import { Header } from '@/components/Header';
 import React, { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { WindowConway } from '@/components/Conway';
 
 export default function ContactPage() {
     const { toast } = useToast()
@@ -75,9 +76,14 @@ export default function ContactPage() {
 
     return (
         <main>
-            <Header/>
-            <div className='w-full h-full pt-20 flex flex-col justify-center items-center px-2'>
-                <h2 className="">So you want my number...</h2>
+            <div className="w-full h-screen opacity-15 absolute z-0">
+                <WindowConway settings={false}/>
+            </div>
+            <div className="z-10 w-full h-full">
+                <Header/>
+            </div>
+            <div className='w-full h-full pt-20 flex flex-col justify-center items-center px-2 z-10 relative'>
+                <h1 className="">So you want my number...</h1>
                 <p className="px-10 py-5">Write your name, email, and a quick message below and I will get back to you.</p>
                 <form onSubmit={handleSubmit} className="flex flex-col justify-start items-center w-full sm:w-[600px] bg-purple-400 p-10 border border-black border-2">
                     <div className="flex flex-col justify-start items-start w-full px-5 h-1/5">

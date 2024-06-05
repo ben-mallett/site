@@ -9,7 +9,7 @@ export const Header = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
     const random = getRandomLink();
     return (
-        <div className="flex justify-between items-center w-full top-0 p-4 gap-2">
+        <div className="flex justify-between items-center w-full top-0 p-4 gap-2 relative">
             <div className="w-full flex justify-start items-center">
                 <Link href="/" className="border border-black border-4 px-1 opacity-90 bg-yellow-300 hover-shadow-lg ">
                     <h1>benjamin | nimajneb</h1>

@@ -5,7 +5,7 @@ import { WindowConway } from "@/components/Conway";
 export default function ConwayPage() {
   return (
     <main>
-        <WindowConway/>
+        <WindowConway settings={true}/>
     </main>
   );
 }

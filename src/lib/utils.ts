@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { getAllPosts } from "./api"
 
 const bgColors = [
   "bg-red-300",
@@ -25,9 +26,7 @@ const bgColors = [
 ]
 
 const links = [
-  "/showcase/conway",
-  "/blog/conway",
-  "/blog/helloworld"
+  "/showcase/conway"
 ]
 
 export function cn(...inputs: ClassValue[]) {
