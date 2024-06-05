@@ -7,12 +7,12 @@ import { useToast } from "@/components/ui/use-toast";
 import axios from "axios"
 import { getRandomBgColor } from "@/lib/utils";
 
-export default function GamesPage() {
+export default function BlogPage() {
     const { toast } = useToast();
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        const getGames = async () => {
+        const getPosts = async () => {
             try {
                 const response = await axios.get("/api/posts");
                 const postsResponse = response.data.blogposts;
@@ -25,10 +25,13 @@ export default function GamesPage() {
             }
         }
 
-        getGames().catch((e) => {
-            console.log(e)
+        getPosts().catch((e) => {
+            toast({
+                title: "Uh oh...",
+                description: 'Something went wrong getting the blog posts'
+            })
         });
-    }, [])
+    }, [toast])
 
   return (
     <main>
@@ -41,10 +44,15 @@ export default function GamesPage() {
                         posts.map((post: any, i) => {
                             const bgColor = getRandomBgColor();
                             return (
-                                <Link href={`blog/${post.slug}`}>
-                                    <div key={i} className={`w-full h-96 border border-black border-4 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
+                                <Link key={i} href={`blog/${post.slug}`}>
+                                    <div className={`w-full h-96 border border-black border-4 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
                                         <h3 className="p-5">{post.title}</h3>
-                                        <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>Authors: {post.authors.map((author : string) => <span>{`${author}`}</span>)}</h4>
+                                        <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>
+                                            Authors: 
+                                            {
+                                                post.authors.map((author : string, j: number) => <span key={j}>{`${author}`}</span>)
+                                            }
+                                        </h4>
                                         <h4 className="p-5">{post.description}</h4>
                                     </div>
                                 </Link>

@@ -11,7 +11,7 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const getGames = async () => {
+    const getPosts = async () => {
       try {
         const response = await axios.get("/api/posts");
         const postsResponse = response.data.blogposts;
@@ -24,16 +24,16 @@ export default function Home() {
       }
     }
 
-    getGames().catch((e) => {
+    getPosts().catch((e) => {
         console.log(e)
     });
-  }, [])
+  }, [toast])
 
   return (
     <main>
       <Header/>
       <div className="w-full h-full pt-20 flex flex-col justify-center items-center gap-6 px-10">
-        <h1 className="text-6xl">Hey! I'm Ben</h1>
+        <h1 className="text-6xl">Hey! My name is Ben</h1>
         <div className="w-4/5/3 text-4xl text-center">
           I read things. I write things. I build things. You can read about some of those things here.
         </div>

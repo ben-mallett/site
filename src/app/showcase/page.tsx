@@ -28,7 +28,7 @@ export default function ShowcasePage() {
         getShowcaseItems().catch((e) => {
             console.log(e)
         });
-    }, [])
+    }, [toast])
 
   return (
     <main>

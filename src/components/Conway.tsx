@@ -209,7 +209,7 @@ const Conway = ({ width, height }: ConwayProps) => {
      */
     useEffect(() => {
         initGrid()
-    }, [width, height, sparsity, resolution])
+    }, [width, height, sparsity, resolution, initGrid])
 
 
     /**
@@ -223,7 +223,7 @@ const Conway = ({ width, height }: ConwayProps) => {
         }, tickRate);
 
         return () => clearInterval(iid);
-    }, [rowSize, colSize, updateGrid, tickRate, pause])
+    }, [rowSize, colSize, updateGrid, tickRate, pause, updateGrid])
 
     const gridCells = useMemo(() => {
         return grid.map((cell, i) => {
@@ -245,7 +245,7 @@ const Conway = ({ width, height }: ConwayProps) => {
                 </div>
             );
         });
-    }, [grid, diagnostics, resolution, colorSwap, rounded, activeColor, activeTextColor]);
+    }, [grid, diagnostics, resolution, colorSwap, rounded, activeColor, activeTextColor, getNumberOfAliveNeighbors, handleMouseMove, handleMouseUp]);
 
     return (
         <div className={`w-screen h-screen flex justify-center items-center ${colorSwap ? activeColor : 'bg-white'}`} onMouseDown={(e) => e.preventDefault()} onMouseMove={(e) => e.preventDefault()} onMouseUp={(e) => {e.preventDefault(); setDrawing(false)}}>
