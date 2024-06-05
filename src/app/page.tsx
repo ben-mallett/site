@@ -87,7 +87,7 @@ export default function Home() {
                   )
                 })
               }
-              <Link key={i} href='/blog'>
+              <Link href='/blog'>
                 <div className="w-[200px] h-[200px] bg-white border border-black border-2 flex justify-center items-center hover-shadow-sm text-2xl p-2">
                   &rarr;
                   <br/>
@@ -103,7 +103,7 @@ export default function Home() {
                 showcaseItems.map((showcase, i) => {
                   const bgColor = getRandomBgColor()
                   return (
-                    <Link href={`/showcase/${showcase.slug}`}>
+                    <Link key={i} href={`/showcase/${showcase.slug}`}>
                       <div className={`w-[200px] h-[200px] border border-black border-2 hover-shadow-sm flex justify-center items-center ${bgColor} text-2xl`}>
                         {showcase.title}
                       </div>
