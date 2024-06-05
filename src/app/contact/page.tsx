@@ -4,6 +4,8 @@ import { Header } from '@/components/Header';
 import React, { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { WindowConway } from '@/components/Conway';
+import emailjs from '@emailjs/browser';
+
 
 export default function ContactPage() {
     const { toast } = useToast()
@@ -62,17 +64,34 @@ export default function ContactPage() {
         setErrors(newErrors);
 
         if (valid) {
-            toast({
-                title: "Message Sent",
-                description: "I'll get back to you as soon as I can"
+            emailjs
+            .sendForm(process.env.EMAILJS_SERVICE_ID as string, process.env.EMAILJS_TEMPLATE_ID as string, formData, {
+                publicKey: process.env.EMAILJS_PUBLIC_KEY,
             })
-            setFormData({
-                name: '',
-                email: '',
-                message: ''
-            });
+            .then(
+                () => {
+                    toast({
+                        title: "Message Sent",
+                        description: "I'll get back to you as soon as I can"
+                    })
+                    setFormData({
+                        name: '',
+                        email: '',
+                        message: ''
+                    });
+                },
+                (error: any) => {
+                    toast({
+                        title: "Uh oh...",
+                        description: "Looks like I didn't get your message. Try again some other time."
+                    })
+                    console.log('FAILED...', error.text);
+                },
+            );
         }
     };
+
+    console.log(process.env.EMAILJS_SERVICE_ID)
 
     return (
         <main>
