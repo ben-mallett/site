@@ -26,7 +26,10 @@ export default function ShowcasePage() {
         }
 
         getShowcaseItems().catch((e) => {
-            console.log(e)
+            toast({
+                title: "Uh oh...",
+                description: "Failed getting showcase items"
+            })
         });
     }, [toast])
 

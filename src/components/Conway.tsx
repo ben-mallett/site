@@ -166,6 +166,7 @@ const Conway = ({ width, height }: ConwayProps) => {
         setTickRate(75)
         setActiveColor('bg-blue-400')
         setDrawing(false)
+        setRounded(false)
     }
 
     /**

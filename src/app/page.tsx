@@ -91,7 +91,7 @@ export default function Home() {
                 <div className="w-[200px] h-[200px] bg-white border border-black border-2 flex justify-center items-center hover-shadow-sm text-2xl p-2">
                   &rarr;
                   <br/>
-                  To the blog
+                  To the Blog
                 </div>
               </Link>
             </div>

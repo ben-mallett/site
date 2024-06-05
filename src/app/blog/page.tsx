@@ -50,7 +50,7 @@ export default function BlogPage() {
                                         <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>
                                             Authors: 
                                             {
-                                                post.authors.map((author : string, j: number) => <span key={j}>{`${author}`}</span>)
+                                                post.authors.map((author : string, j: number) => <span key={j}>{` ${author}`}</span>)
                                             }
                                         </h4>
                                         <h4 className="p-5">{post.description}</h4>
