@@ -17,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>  
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> 
+      <head>
+        <link rel="icon" type="image/x-icon" href="/images/icon.ico"/>
+      </head> 
       <body className={`${jersey.className}`}>
           {children}
           <Toaster />
