@@ -14,7 +14,7 @@ export default async function Home() {
     <main>
       <Header/>
       <div className="w-full h-full pt-10 flex flex-col justify-center items-center gap-6 px-10">
-        <h1 className="text-6xl">Hey! My name is Ben</h1>
+        <h1 className="text-6xl">Hey! I&#39;m Ben</h1>
         <div className="w-4/5/3 text-4xl text-center">
           I read things. I write things. I build things. You can read about some of those things here.
         </div>
