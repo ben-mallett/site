@@ -101,8 +101,8 @@ export default function ContactPage() {
                 <Header/>
             </div>
             <div className='w-full h-full md:pt-20 flex flex-col justify-center items-center px-2 z-10 relative'>
-                <h1 className="">So you want my number...</h1>
-                <p className="px-10 py-5">Write your name, email, and a quick message below and I will get back to you.</p>
+                <h1 className="text-center">So you want my number...</h1>
+                <p className="px-10 py-5 text-center">Write your name, email, and a quick message below and I will get back to you.</p>
                 <form ref={form as any} onSubmit={handleSubmit} className="flex flex-col justify-start items-center w-full sm:w-[600px] bg-purple-400 p-5 md:p-10 border border-black border-2">
                     <div className="flex flex-col justify-start items-start w-full py-2 h-1/5">
                         <label>
