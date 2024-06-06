@@ -12,7 +12,7 @@ export default async function BlogPage() {
                 <Header/>
                 <div className="flex flex-col justify-center items-start">
                     <h2 className="p-10 font-bold text-6xl border-none lg:pl-32 col-span-2 w-full">The Blog</h2>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-x-10 gap-y-10 mx-auto py-10 px-2 lg:px-20 w-full h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-x-10 gap-y-10 mx-auto py-10 px-2 lg:px-20 w-full h-full">
                         {
                             posts.map((post: any, i) => {
                                 const bgColor = getRandomBgColor();
