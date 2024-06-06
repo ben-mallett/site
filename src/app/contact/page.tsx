@@ -1,13 +1,14 @@
 "use client"
 
 import { Header } from '@/components/Header';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, RefObject } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { WindowConway } from '@/components/Conway';
 import emailjs from '@emailjs/browser';
 
 
 export default function ContactPage() {
+    const form = useRef<React.LegacyRef<HTMLInputElement>>();
     const { toast } = useToast()
     const [formData, setFormData] = useState({
         name: '',
@@ -65,9 +66,9 @@ export default function ContactPage() {
 
         if (valid) {
             emailjs
-            .sendForm(process.env.EMAILJS_SERVICE_ID as string, process.env.EMAILJS_TEMPLATE_ID as string, formData, {
-                publicKey: process.env.EMAILJS_PUBLIC_KEY,
-            })
+            .sendForm(process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID as string, process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string, form.current as any, {
+                publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string,
+              })
             .then(
                 () => {
                     toast({
@@ -85,27 +86,25 @@ export default function ContactPage() {
                         title: "Uh oh...",
                         description: "Looks like I didn't get your message. Try again some other time."
                     })
-                    console.log('FAILED...', error.text);
+                    console.log('FAILED...', error);
                 },
             );
         }
     };
-
-    console.log(process.env.EMAILJS_SERVICE_ID)
 
     return (
         <main>
             <div className="w-full h-screen opacity-15 absolute z-0">
                 <WindowConway settings={false}/>
             </div>
-            <div className="z-10 w-full h-full">
+            <div className="z-40 relative w-full h-full">
                 <Header/>
             </div>
-            <div className='w-full h-full pt-20 flex flex-col justify-center items-center px-2 z-10 relative'>
+            <div className='w-full h-full md:pt-20 flex flex-col justify-center items-center px-2 z-10 relative'>
                 <h1 className="">So you want my number...</h1>
                 <p className="px-10 py-5">Write your name, email, and a quick message below and I will get back to you.</p>
-                <form onSubmit={handleSubmit} className="flex flex-col justify-start items-center w-full sm:w-[600px] bg-purple-400 p-10 border border-black border-2">
-                    <div className="flex flex-col justify-start items-start w-full px-5 h-1/5">
+                <form ref={form as any} onSubmit={handleSubmit} className="flex flex-col justify-start items-center w-full sm:w-[600px] bg-purple-400 p-5 md:p-10 border border-black border-2">
+                    <div className="flex flex-col justify-start items-start w-full py-2 h-1/5">
                         <label>
                             Name
                         </label>
@@ -121,7 +120,7 @@ export default function ContactPage() {
                             <span className="error">{errors.name}</span>
                         }
                     </div>
-                    <div className="flex flex-col justify-start items-start w-full p-5 h-1/5 focus:scale-115">
+                    <div className="flex flex-col justify-start items-start w-full py-2 md:py-5 h-1/5 focus:scale-115">
                         <label>
                             Email
                         </label>
@@ -137,7 +136,7 @@ export default function ContactPage() {
                             <span className="error">{errors.email}</span>
                         }
                     </div>
-                    <div className="flex flex-col justify-start items-start w-full p-5 h-2/5">
+                    <div className="flex flex-col justify-start items-start w-full py-2 md:py-5 h-2/5">
                         <label>Message</label>
                         <textarea
                             name="message"
