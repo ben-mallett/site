@@ -89,8 +89,15 @@
     @apply text-xl
   }
   p {
-    @apply text-2xl
+    @apply text-2xl py-2
   }
+  ul {
+    @apply list-disc ml-[20px] text-xl
+  }
+  p > a {
+    @apply text-blue-400
+  }
+
   .hover-enlarge-sm {
     @apply transition duration-300 hover:scale-105 focus:outline-none focus:scale-105 hover:cursor-pointer;
   }

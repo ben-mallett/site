@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import remarkParse from 'remark-parse'
+import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypePrettyCode from 'rehype-pretty-code'
@@ -19,24 +20,24 @@ const getPosts = () => {
 const getParser = () => {
   return unified()
     .use(remarkParse)
-    .use(remarkRehype)
-    .use(remarkGfm)
+    .use(remarkBreaks)  
+    .use(remarkGfm) 
+    .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypePrettyCode, {
-      theme: 'one-dark-pro',
+        theme: 'one-dark-pro',
     })
-    .use(rehypeStringify)
-    .use(rehypeStringify)
     .use(rehypeSlug)
     .use(rehypeAutolinkHeadings, {
         content: arg => ({
-          type: 'element',
-          tagName: 'a',
-          properties: {
+            type: 'element',
+            tagName: 'a',
+            properties: {
             href: `#${String(arg.properties?.id)}`
-          },
-          children: [{ type: 'text', value: '#' }],
+            },
+            children: [{ type: 'text', value: '' }],
         }),
     })
+    .use(rehypeStringify, { allowDangerousHtml: true });
 }
 
 const parser = getParser()

@@ -25,7 +25,7 @@ export default async function Post({ params: { id } } : { params: { id: string }
                 <article className="w-full md:w-[800px]">
                     <h1 className="pt-10">{title}</h1>
                     <h4 className="pb-10">{date}</h4>
-                    <div dangerouslySetInnerHTML={{ __html: html }} />
+                    <div className="text-justify" dangerouslySetInnerHTML={{ __html: html }} />
                 </article>
             </div>
         </main>
