@@ -27,7 +27,7 @@ export default async function BlogPage() {
                                                     authors.map((author : string, j: number) => <span key={j}>{` ${author}`}</span>)
                                                 }
                                             </h4>
-                                            <h4 className="p-5">{description}</h4>
+                                            <h4 className="p-5 text-justify">{description}</h4>
                                         </div>
                                     </Link>
                                 )

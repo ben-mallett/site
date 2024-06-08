@@ -26,7 +26,9 @@ const bgColors = [
 ]
 
 const links = [
-  "/showcase/conway"
+  "/showcase/conway",
+  "/blog/conway",
+  "/blog/helloworld"
 ]
 
 export function cn(...inputs: ClassValue[]) {
