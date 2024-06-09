@@ -19,7 +19,7 @@ export default async function BlogPage() {
                                 const { id, description, title, authors } = post
                                 return (
                                     <Link key={i} href={`blog/${id}`}>
-                                        <div className={`w-full h-96 border border-black border-4 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
+                                        <div className={`w-full h-96 border border-black border-2 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
                                             <h3 className="p-5">{title}</h3>
                                             <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>
                                                 Authors: 

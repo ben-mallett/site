@@ -18,7 +18,7 @@ export default async function ShowcasePage() {
                                 const bgColor = getRandomBgColor();
                                 return (
                                     <Link key={i} href={showcase.slug ? `/showcase/${showcase.slug}` : '/showcase'}>
-                                        <div className={`w-full h-72 border border-black border-4 hover-shadow-xl flex flex-col justify-start items-center text-justify ${bgColor}`}>
+                                        <div className={`w-full h-72 border border-black border-2 hover-shadow-xl flex flex-col justify-start items-center text-justify ${bgColor}`}>
                                             <h3 className="pt-10">{showcase.title}</h3>
                                             <h4 className="p-5">{showcase.description}</h4>
                                         </div>
