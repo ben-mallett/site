@@ -20,14 +20,14 @@ export default async function BlogPage() {
                                 return (
                                     <Link key={i} href={`blog/${id}`}>
                                         <div className={`w-full h-96 border border-black border-2 hover-shadow-xl flex flex-col justify-start items-center ${bgColor}`}>
-                                            <h3 className="p-5">{title}</h3>
-                                            <h4 className="p-5 justify-self-end" style={{justifySelf: "end"}}>
+                                            <h3 className="p-2 md:p-5">{title}</h3>
+                                            <h4 className="p-2 md:p-5 justify-self-end" style={{justifySelf: "end"}}>
                                                 Authors: 
                                                 {
                                                     authors.map((author : string, j: number) => <span key={j}>{` ${author}`}</span>)
                                                 }
                                             </h4>
-                                            <h4 className="p-5 text-justify">{description}</h4>
+                                            <h4 className="p-2 md:p-5 text-justify">{description}</h4>
                                         </div>
                                     </Link>
                                 )

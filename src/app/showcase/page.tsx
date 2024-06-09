@@ -12,7 +12,7 @@ export default async function ShowcasePage() {
                 <Header/>
                 <div className="flex flex-col justify-center items-start">
                     <h2 className="p-10 font-bold text-6xl border-none lg:pl-32 col-span-2 w-full">The Showroom</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-10 mx-auto py-10 px-2 lg:px-20 w-full h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-10 mx-auto py-5 md:py-10 px-2 lg:px-20 w-full h-full">
                         {
                             showcaseItems.map((showcase: any, i) => {
                                 const bgColor = getRandomBgColor();
