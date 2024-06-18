@@ -43,11 +43,31 @@ Throughout my graduate degree, experiential learning proved to be incredibly pow
 
 ### Early Employment
 
-Earlier, I mentioned my co-op position at Running Tide. This position stayed with me long after my co-op completion. From my sophomore year to the present day, I've worked full-time at Running Tide. 
+Earlier, I mentioned my co-op position at Running Tide. This position stayed with me long after my co-op completion. From my sophomore year in early 2022 to June 2024, I worked full-time at Running Tide. 
 
-Running Tide is a nature-based carbon removal company. What does that mean? At Running Tide, we leverage the ocean to store carbon at geologic scales. In practice, this means that we deploy biomass into the deep ocean where it grows macroalgae. Eventually, it becomes negatively buoyant and sinks below 1,000 meters, where it is stored durably at geologic timescales. 
+Running Tide was a nature-based carbon removal company. What does that mean? At Running Tide, we leveraged the ocean to store carbon at geologic scales. In practice, this means that we deployed biomass into the deep ocean where it can grow macroalgae (Sidenote: At Running Tide we showed that yes, you actually can grow macroalgae far offshore, we have the photos to prove it). Eventually, that substrate becomes negatively buoyant and sinks below 1,000 meters, where it is stored durably at geologic timescales. 
 
-Due to the nature of our interventions, it is critical to physically verify their efficacy. At Running Tide I develop portions of this verification system. Specifically, I've worked on writing firmware for our offshore buoys, developed web software for fleet management and data reception, implemented AI data pipelines for machine vision systems, created hardware systems to simulate offshore data, and much more. 
+Due to the nature of our interventions (being far offshore and all), it is critical to physically verify their efficacy. At Running Tide I developed portions of this verification system. Specifically, I've worked on writing firmware for our offshore buoys, developed web software for fleet management and data reception, implemented ML data pipelines for machine vision systems, created hardware systems to simulate offshore data, and much more. 
+
+#### Offshore Verification Buoys
+To verify our interventions, we maintained a high-tech fleet of buoys, ranging from small trajectory buoys to large camera and machine vision buoys. I worked on the software and firmware stack for many of these buoys, including our accelerometer buoy, cage buoys, and cam-lite buoys. I wrote ZephyrRTOS drivers to control various hardware (temperature sensors, cameras, fluorometers, etc). I wrote Cron-based jobs that collect, compress, serialize, and transmit various sensor readings and testing information. I wrote portions of a custom Bluetooth Low Energy (BLE) service that allowed for desktop communication with the device and associated hardware for system testing. I designed a scalable, fault tolerant, architecture for a  fleet management and reporting service.
+
+ Working on these buoys and related services provided me with great opportunities to learn the embedded stack as well as large portions of the modern web stack. I gained great project management, system architecture, and technical communication experience. This is also where I learned that I really like a fast-paced engineering environment. Product iterations on this team happen quickly and efficiently, with constant adaptations to new problems facing our buoys, and interesting applications of their tech.
+
+#### Ocean Instrumentation and Control Systems & ML Data Pipelines
+At Running Tide, we relied heavily on machine learning to provide insights into the efficacy of our interventions. Whether that be through segmentation models to estimate sink rate while accounting for toss-up or camera obstructions, to macroalgae growth models for estimating carbon content of offshore macroalgae, machine learning was ubiqitous across our tech stack. 
+
+Feeding these models requires data, and that data is spread across a variety of systems. To solve this problem I developed applications to create, aggregate, and expose data for use in machine learning operations. Specifically, I designed multiple CRUD applications for speciman tracking and metadata annotation, as well as the Onshore Research Camera Aquarium (ORCA), a lab system designed to replicate the conditions reflected in the images we received from our offshore buoys.
+
+In designing this system I got the opportunity to lead the software architecture design, major implementation, project management and stakeholder communications, and end user training. With this project I implemented drivers for various pieces of hardware (motors, lights, cameras, etc.) and creating an intuitive, appealing UI for interfacing with the tank. Additionally, I wrote APIs for accessing collected data, an automation framework that allowed operators to define the set of photos they wanted to take and automate their collection, and provided extensive training to end users via thorough documentation and video demos. 
+
+These projects taught me tons about the intricacies of machine learning models, data cleanliness, data efficacy, software architecture, the software development life cycle, end user training, and project maintenance. ORCA was one of the first projects that I led from inception to end user integration, and I'm happy to say it turned out quite well, improving data acquisition efficiency 25x and generating hundreds of lab images for use in machine vision models.
+
+#### Overall
+
+My time at Running Tide was fantastic. I learned in an incredibly fast-paced, intelligent work environment and gained engineering skills that will be crucial to my future career. In the end, the voluntary carbon market showed its teeth, and with a lack of demand for the types of credits we were generating, Running Tide was unable to secure funding for industrial scale operations and had to shut its doors in June 2024 after several months of prolonged fundraising. 
+
+I was with Running Tide for two years from its first cage-buoy architecture deployments, through its first carbon removals (25000 tons worth), through new locations and new coworkers, through algorithm wins and major efficiency improvements, through layoffs and site closures, to the end of the business. Running Tide was my first employer in the technical space, and I couldn't have asked for a better mission, culture, or team to fill that role.
 
 ### Familiar Technologies
 
@@ -55,7 +75,7 @@ Throughout my studies and career, I've gained experience in a variety of languag
 
 ### This Site
 
-On this site, I hope to explore more of what can be enabled by software. Here, I hope to host an array of unique, small software demos that I've built. For example, I've already posted a small blog on cellular automata and one of the more famous computer science problems: [Conway's Game of Life](/blog/conway). Additionally, I plan to write on larger scoped projects that I've taken on, like building a reef tank control system, and any other thoughts that I might want to put to words.
+Now that's a whole lot of words to say that I've worked on some cool software projects. With this site, I hope to explore more of what can be enabled by software and document my learnings. I plan to host an array of unique, small software demos that I've built in the [Showcase](/showcase) section and write blog posts about various topics. For example, I've already posted a small blog on cellular automata and one of the more famous computer science problems: [Conway's Game of Life](/blog/conway). Additionally, I plan to write on larger scoped projects that I've taken on, like building a reef tank control system, and any other thoughts that I might want to put to words.
 
 I hope you enjoy the site. If you'd like to reach out, head over to the [contact page](/contact).
 

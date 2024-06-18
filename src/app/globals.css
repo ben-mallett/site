@@ -97,6 +97,9 @@
   p > a {
     @apply text-blue-400
   }
+  article > div > h4 {
+    @apply text-2xl
+  }
 
   .hover-enlarge-sm {
     @apply transition duration-300 hover:scale-105 focus:outline-none focus:scale-105 hover:cursor-pointer;
