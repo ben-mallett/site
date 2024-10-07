@@ -31,4 +31,3 @@ export default async function Post({ params: { id } } : { params: { id: string }
         </main>
     )
 }
- 

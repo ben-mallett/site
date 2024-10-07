@@ -81,6 +81,11 @@ export const showcaseItems = [
         description: "A unique plaground showcasing John Conway's famous 'Game of Life', and some of the emergent behavior that happens when you change the rules.",
         slug: "conway"
     },
+    {
+      title: "Poker?", 
+      description: "An assortment of video poker games accompanied by anaylsis into the impact of game variants, and how the best play can shift in each game.",
+      slug: "video-poker"
+    }
 ]
 
 export async function getAllShowcaseItems() {
