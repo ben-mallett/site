@@ -53,7 +53,6 @@ export enum PokerSuit {
 }
 
 export enum PokerValue {
-  Ace = "A",
   Two = "2",
   Three = "3",
   Four = "4",
@@ -65,7 +64,42 @@ export enum PokerValue {
   Ten = "T",
   Jack = "J",
   Queen = "Q",
-  King = "K"
+  King = "K",
+  Ace = "A"
+}
+
+export enum PokerHands {
+  HighCard = "High Card",
+  Pair = "One Pair",
+  JacksOrBetter = "Jacks or Better",
+  TwoPair = "Two Pair",
+  ThreeOfAKind = "Three of a Kind",
+  Straight = "Straight",
+  Flush = "Flush",
+  FullHouse = "Full House",
+  Quads = "Quads",
+  QuadsTwosThreesFours = "Quads (2s, 3s, 4s)",
+  QuadsFiveToTen = "Quads (5-10)",
+  QuadsJackQueenKing = "Quads (Js, Qs, Ks)",
+  QuadAces = "Quad Aces",
+  StraightFlush = "Straight Flush",
+  RoyalFlush = "Royal Flush"
+}
+
+export const PokerValueRanks: Record<PokerValue, number> = {
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7,
+  "8": 8,
+  "9": 9,
+  "T": 10,
+  "J": 11,
+  "Q": 12,
+  "K": 13,
+  "A": 14
 }
 
 export const PokerSuitColors: Record<PokerSuit, string> = {
