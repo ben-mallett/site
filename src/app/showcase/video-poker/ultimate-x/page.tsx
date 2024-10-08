@@ -51,16 +51,16 @@ const UltimateXHandMultiplierTable: Record<PokerHands, number[]> = {
     "High Card": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     "One Pair": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     "Jacks or Better": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    "Two Pair": [1, 2, 3, 4, 5, 6, 6, 6, 6, 6],
-    "Three of a Kind": [1, 2, 3, 4, 5, 6, 6, 6, 6, 6],
-    "Straight": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "Flush": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "Full House": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    "Quads": [1, 3, 5, 9, 10, 10, 10, 10, 10, 10],
-    "Quads (2s, 3s, 4s)": [1, 3, 5, 9, 10, 10, 10, 10, 10, 10],
-    "Quads (5-10)": [1, 3, 5, 9, 10, 10, 10, 10, 10, 10],
-    "Quads (Js, Qs, Ks)": [1, 3, 5, 9, 10, 10, 10, 10, 10, 10],
-    "Quad Aces": [1, 3, 5, 9, 10, 10, 10, 10, 10, 10],
+    "Two Pair": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    "Three of a Kind": [1, 3, 4, 5, 5, 5, 5, 5, 5, 5],
+    "Straight": [1, 3, 4, 5, 7, 8, 8, 8, 8, 8],
+    "Flush": [1, 3, 4, 6, 8, 8, 8, 8, 8, 8],
+    "Full House": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
+    "Quads": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
+    "Quads (2s, 3s, 4s)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
+    "Quads (5-10)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
+    "Quads (Js, Qs, Ks)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
+    "Quad Aces": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
     "Straight Flush": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     "Royal Flush": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 }
@@ -249,7 +249,7 @@ export default function UltimateX() {
     const [outsideHands, setOutsideHands] = useState<Hand[]>(new Array(numOutsideHands).fill(defaultOutsideHand))
     const [activeHandResult, setActiveHandResult] = useState<PokerHands | undefined>(undefined)
     const [outsideHandsResults, setOutsideHandsResults] = useState<(PokerHands | undefined)[]>(new Array(numOutsideHands).fill(undefined))
-    const [score, setScore] = useState<number>(1000)
+    const [score, setScore] = useState<number>(5000)
     const [freezeInput, setFreezeInput] = useState<boolean>(false)
     const [multipliers, setMultipliers] = useState<Record<PokerHands, number>>(defaultMultipliers);
     const [dealNew, setDealNew] = useState<boolean>(false);
@@ -417,34 +417,39 @@ export default function UltimateX() {
 
     useEffect(() => {
         const handleKeydown = (e: KeyboardEvent) => {
-            if (freezeInput) return;
-            const holds: Holds = [false, false, false, false, false]
-            switch(e.key) {
-                case 'a':
-                    holds[0] = !holds[0]
-                    break;    
-                case 's':
-                    holds[1] = !holds[1]
-                    break;
-                case 'd':
-                    holds[2] = !holds[2]
-                    break;
-                case 'f':
-                    holds[3] = !holds[3]
-                    break;
-                case 'g':
-                    holds[4] = !holds[4]
-                    break;
-            }
-            setActiveHolds((prev) => {
-                const copy: Holds = [...prev]
-                holds.forEach((hold, i) => {
-                    if (hold) {
-                        copy[i] = !copy[i]
-                    }
+            const updateHolds = (e: KeyboardEvent) => {
+                const holds: Holds = [false, false, false, false, false]
+                switch(e.key) {
+                    case 'a':
+                        holds[0] = !holds[0]
+                        break;    
+                    case 's':
+                        holds[1] = !holds[1]
+                        break;
+                    case 'd':
+                        holds[2] = !holds[2]
+                        break;
+                    case 'f':
+                        holds[3] = !holds[3]
+                        break;
+                    case 'g':
+                        holds[4] = !holds[4]
+                        break;
+                }
+                setActiveHolds((prev) => {
+                    const copy: Holds = [...prev]
+                    holds.forEach((hold, i) => {
+                        if (hold) {
+                            copy[i] = !copy[i]
+                        }
+                    })
+                    return copy;
                 })
-                return copy;
-            })
+            }
+
+            const triggerDeal = e.key === 'Enter'
+            if (!freezeInput) updateHolds(e)
+            if (triggerDeal) handleDeal();
         }
 
         document.addEventListener("keydown", handleKeydown)
@@ -452,7 +457,7 @@ export default function UltimateX() {
         return () => {
             document.removeEventListener("keydown", handleKeydown)
         }
-    }, [freezeInput])
+    }, [freezeInput, handleDeal])
 
     useEffect(() => {
         if (!freezeInput) setOutsideHands(new Array(numOutsideHands).fill(activeHand.map((card, i) => activeHolds[i] ? card : undefined)))
@@ -461,27 +466,27 @@ export default function UltimateX() {
     return (
         <div className="w-screen h-screen grid grid-cols-5 gap-2 justify-center items-start">
             <div className="w-full h-full col-start-1 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Royal Flush</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Royal Flush"]} x{UltimateXHandMultiplierTable["Royal Flush"][multipliers["Royal Flush"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Straight Flush</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Straight Flush"]} x{UltimateXHandMultiplierTable["Straight Flush"][multipliers["Straight Flush"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Quads (As)</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Quad Aces"]} x{UltimateXHandMultiplierTable["Quad Aces"][multipliers["Quad Aces"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Quads (2s, 3s, 4s)</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Quads (2s, 3s, 4s)"]} x{UltimateXHandMultiplierTable["Quads (2s, 3s, 4s)"][multipliers["Quads (2s, 3s, 4s)"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Quads (Js, Qs, Ks)</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Quads (Js, Qs, Ks)"]} x{UltimateXHandMultiplierTable["Quads (Js, Qs, Ks)"][multipliers["Quads (Js, Qs, Ks)"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Quads (5s-10s)</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Quads (5-10)"]} x{UltimateXHandMultiplierTable["Quads (5-10)"][multipliers["Quads (5-10)"]]}</div>
                 </div>
@@ -494,27 +499,27 @@ export default function UltimateX() {
                 }
             </div>
             <div className="w-full h-full col-start-5 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
-                <div className="bg-blue-700 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Full House</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Full House"]} x{UltimateXHandMultiplierTable["Full House"][multipliers["Full House"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Flush</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Flush"]} x{UltimateXHandMultiplierTable["Flush"][multipliers["Flush"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Straight</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Straight"]} x{UltimateXHandMultiplierTable["Straight"][multipliers["Straight"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Three of a Kind</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Three of a Kind"]} x{UltimateXHandMultiplierTable["Three of a Kind"][multipliers["Three of a Kind"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Two Pair</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Two Pair"]} x{UltimateXHandMultiplierTable["Two Pair"][multipliers["Two Pair"]]}</div>
                 </div>
-                <div className="bg-blue-700 text-yellow-400 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Jacks or Better</div>
                     <div className="text-3xl">{UltimateXHandPointValues["Jacks or Better"]} x{UltimateXHandMultiplierTable["Jacks or Better"][multipliers["Jacks or Better"]]}</div>
                 </div>
@@ -544,12 +549,12 @@ export default function UltimateX() {
             }
             <div className="col-start-3 col-span-1 flex flex-col gap-2 justify-center items-center">
                 <div className={`${score < 0 ? 'text-red-600' : 'text-emerald-600'} font-semibold text-4xl`}>${score}</div>
-                <button 
-                    className="font-semibold mb-10 border border-2 border-black bg-orange-500 px-12 py-2 text-2xl rounded-md" 
+                <div
+                    className="cursor-pointer font-semibold mb-10 border border-2 border-black bg-orange-500 px-12 py-2 text-2xl rounded-md" 
                     onClick={() => handleDeal()} 
                 >
                     Deal
-                </button>
+                </div>
             </div>
             {
                 wonValue > 0 && (
