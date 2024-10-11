@@ -1,7 +1,7 @@
 "use client"
 
 import { PokerCardComponent } from "@/components/PokerCardComponent";
-import { Hand, PokerCard, PokerDeckUnshuffled, PokerHand, evaluateHandForUltimateX, getCardsFromDeck, getHandFromDeck, getShuffledDeck } from "@/lib/pokerUtils";
+import { Hand, Holds, PokerCard, PokerDeckUnshuffled, PokerHand, evaluateHandForUltimateX, getCardsFromDeck, getHandFromDeck, getShuffledDeck } from "@/lib/pokerUtils";
 import { useCallback, useEffect, useState } from "react";
 
 const UltimateXHandPointValues: Record<PokerHand, number> = {
@@ -76,25 +76,22 @@ const UltimateXBgColors: Record<PokerHand, string> = {
     "Royal Flush": 'bg-orange-500'
 }
 
-type Holds = [boolean, boolean, boolean, boolean, boolean];
-
 interface UltimateXOutsideHandProps {
     hand: Hand,
     result: PokerHand | undefined,
-    multipliers: Record<PokerHand, number>
+    multiplier: number
 }
 
 function UltimateXOutsideHand(props: UltimateXOutsideHandProps) {
-    const { hand, result, multipliers } = props;
+    const { hand, result, multiplier } = props;
     const resultVal = result ? UltimateXHandPointValues[result] : 0 
-    const resultMultiplier = result ? UltimateXHandMultiplierTable[result][multipliers[result]] : 0;
     
     return (
         <div className="flex gap-2 justify-center items-center">
             {
                 result && (resultVal !== 0) &&  (
                     <div className={`border border-2 border-black px-4 py-1 rounded-sm fixed opacity-85 text-xl font-semibold ${UltimateXBgColors[result]}`}>
-                        {result} | {UltimateXHandPointValues[result] * resultMultiplier}
+                        {result} | {UltimateXHandPointValues[result]} x {multiplier} = {UltimateXHandPointValues[result] * multiplier}
                     </div>
                 )
             }
@@ -220,10 +217,8 @@ export default function UltimateX() {
         })
 
         const activeHandResult = evaluateHandForUltimateX(filledActive)
-        console.log(activeHandResult);
         const outsideHandResults = finishedOutsideHands.map((hand) => evaluateHandForUltimateX(hand));
         const outsideHandsPointValue = outsideHandResults.reduce((acc, c) => acc + UltimateXHandPointValues[c] * UltimateXHandMultiplierTable[c][multiplierIndices[c]], 0)
-        console.log(UltimateXHandPointValues[activeHandResult] * UltimateXHandMultiplierTable[activeHandResult][multiplierIndices[activeHandResult]])
         const pointValue = (
             UltimateXHandPointValues[activeHandResult] 
             * UltimateXHandMultiplierTable[activeHandResult][multiplierIndices[activeHandResult]]
@@ -302,66 +297,54 @@ export default function UltimateX() {
     useEffect(() => {
         if (!freezeInput) setOutsideHands(new Array(numOutsideHands).fill(activeHand.map((card, i) => activeHolds[i] ? card : undefined)))
     }, [activeHolds, activeHand, freezeInput])
+    const leftSide = Object.keys(UltimateXHandPointValues).filter(e => UltimateXHandPointValues[e as PokerHand] > 0).slice(0, Math.floor((Object.keys(UltimateXHandPointValues).length - 1) / 2));
 
     return (
         <div className="w-screen h-screen grid grid-cols-5 gap-2 justify-center items-start">
             <div className="w-full h-full col-start-1 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Royal Flush</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Royal Flush"]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Straight Flush</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Straight Flush"]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Quads (As)</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Quad Aces"]} x{UltimateXHandMultiplierTable["Quad Aces"][multiplierIndices["Quad Aces"]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Quads (2s, 3s, 4s)</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Quads (2s, 3s, 4s)"]} x{UltimateXHandMultiplierTable["Quads (2s, 3s, 4s)"][multiplierIndices["Quads (2s, 3s, 4s)"]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Quads (Js, Qs, Ks)</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Quads (Js, Qs, Ks)"]} x{UltimateXHandMultiplierTable["Quads (Js, Qs, Ks)"][multiplierIndices["Quads (Js, Qs, Ks)"]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Quads (5s-10s)</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Quads (5-10)"]} x{UltimateXHandMultiplierTable["Quads (5-10)"][multiplierIndices["Quads (5-10)"]]}</div>
-                </div>
+                {
+                    leftSide.map((e) => (
+                        <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start p-2">
+                            <div className="text-3xl">{e}</div>
+                            <div className="text-3xl">{UltimateXHandPointValues[e as PokerHand]} x {UltimateXHandMultiplierTable[e as PokerHand][multiplierIndices[e as PokerHand]]}</div>
+                        </div>
+                    ))
+                }
             </div>
+            {
+                Object.keys(UltimateXHandPointValues).slice(Math.floor((Object.keys(UltimateXHandPointValues).length - 1) / 2))
+            }
             <div className="col-start-2 col-span-3 grid grid-cols-3 gap-8 justify-center items-center p-2">
                 {
                     outsideHands.map((hand, i) => {
-                        return <UltimateXOutsideHand key={i} hand={hand} result={outsideHandsResults[i]} multipliers={multiplierIndices}/>
+                        return <UltimateXOutsideHand key={i} hand={hand} result={outsideHandsResults[i]} multiplier={outsideHandsResults[i] ? UltimateXHandMultiplierTable[outsideHandsResults[i]][multiplierIndices[outsideHandsResults[i]]] : 1}/>
                     })
                 }
             </div>
             <div className="w-full h-full col-start-5 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
                 <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Full House</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Full House"]} x{UltimateXHandMultiplierTable["Full House"][multiplierIndices["Full House"]]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.FullHouse]} x{UltimateXHandMultiplierTable[PokerHand.FullHouse][multiplierIndices[PokerHand.FullHouse]]}</div>
                 </div>
-                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Flush</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Flush"]} x{UltimateXHandMultiplierTable["Flush"][multiplierIndices["Flush"]]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.Flush]} x{UltimateXHandMultiplierTable[PokerHand.Flush][multiplierIndices[PokerHand.Flush]]}</div>
                 </div>
-                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Straight</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Straight"]} x{UltimateXHandMultiplierTable["Straight"][multiplierIndices["Straight"]]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.Straight]} x{UltimateXHandMultiplierTable[PokerHand.Straight][multiplierIndices[PokerHand.Straight]]}</div>
                 </div>
-                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Three of a Kind</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Three of a Kind"]} x{UltimateXHandMultiplierTable["Three of a Kind"][multiplierIndices["Three of a Kind"]]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.ThreeOfAKind]} x{UltimateXHandMultiplierTable[PokerHand.ThreeOfAKind][multiplierIndices[PokerHand.ThreeOfAKind]]}</div>
                 </div>
-                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Two Pair</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Two Pair"]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.TwoPair]}</div>
                 </div>
-                <div className="bg-blue-500 text-yellow-200 text-yellow-400 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
+                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
                     <div className="text-3xl">Jacks or Better</div>
-                    <div className="text-3xl">{UltimateXHandPointValues["Jacks or Better"]}</div>
+                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.JacksOrBetter]}</div>
                 </div>
             </div>
             <div className='col-start-2 col-span-3 w-full flex items-end justify-center gap-10'>

@@ -414,5 +414,7 @@ export function getFilledHandFromDeck(hand: Hand, remainingCards: PokerCard[]) :
     return hand.map((card, i) => card === undefined ? drawnCards[i] : card)
 }
 
+export type Holds = [boolean, boolean, boolean, boolean, boolean];
+
 
   
