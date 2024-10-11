@@ -1,12 +1,13 @@
-import { PokerCard, PokerSuit, PokerSuitColors, PokerValue } from "@/lib/utils"
+
+import { PokerCard, PokerSuit, PokerSuitColors } from "@/lib/pokerUtils";
 import { ReactElement } from "react";
 
 
 const PokerSuitSymbols: Record<PokerSuit, ReactElement> = {
-    "HEART": <>&#9829;</>,
-    "DIAMOND": <>&#9830;</>,
-    "CLUB": <>&#9827;</>,
-    "SPADE": <>&#9824;</>
+    "Heart": <>&#9829;</>,
+    "Diamond": <>&#9830;</>,
+    "Club": <>&#9827;</>,
+    "Spade": <>&#9824;</>
 }
 
 interface PokerCardComponentPropTypes {
@@ -17,11 +18,11 @@ interface PokerCardComponentPropTypes {
 
 export function PokerCardComponent(props: PokerCardComponentPropTypes) {
     const { size, showHold} = props;
-    const {suit, value } = props.card;
+    const { suit, value } = props.card;
     const bgColor = PokerSuitColors[suit];
     const symbol = PokerSuitSymbols[suit];
     const getSizeClass = (mode: string) => {
-        switch(size) {
+        switch(mode) {
             case 'xl':
                 return 'w-72 h-96 text-4xl p-5 gap-5';
             case 'lg': 

@@ -1,11 +1,11 @@
 export enum PokerSuit {
-    Heart = "HEART",
-    Spade = "SPADE",
-    Diamond = "DIAMOND",
-    Club = "CLUB"
-  }
+    Heart = "Heart",
+    Spade = "Spade",
+    Diamond = "Diamond",
+    Club = "Club"
+}
   
-  export enum PokerValue {
+export enum PokerValue {
     Two = "2",
     Three = "3",
     Four = "4",
@@ -19,9 +19,9 @@ export enum PokerSuit {
     Queen = "Q",
     King = "K",
     Ace = "A"
-  }
+}
   
-  export enum PokerHand {
+export enum PokerHand {
     HighCard = "High Card",
     Pair = "One Pair",
     JacksOrBetter = "Jacks or Better",
@@ -37,48 +37,246 @@ export enum PokerSuit {
     QuadAces = "Quad Aces",
     StraightFlush = "Straight Flush",
     RoyalFlush = "Royal Flush"
-  }
+}
   
 export const PokerValueRanks: Record<PokerValue, number> = {
-"2": 2,
-"3": 3,
-"4": 4,
-"5": 5,
-"6": 6,
-"7": 7,
-"8": 8,
-"9": 9,
-"T": 10,
-"J": 11,
-"Q": 12,
-"K": 13,
-"A": 14
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9,
+    "T": 10,
+    "J": 11,
+    "Q": 12,
+    "K": 13,
+    "A": 14
 }
 
 export const PokerSuitColors: Record<PokerSuit, string> = {
-"HEART": 'bg-red-400',
-"SPADE": 'bg-fuchsia-400',
-"DIAMOND": 'bg-sky-400',
-"CLUB": 'bg-emerald-400'
-}
-
-export const PokerSuitSymbols: Record<PokerSuit, string> = {
-"HEART": "&#9829;",
-"DIAMOND": "&#9830;",
-"CLUB": "&#9827;",
-"SPADE": "&#9824;"
+    "Heart": 'bg-red-400',
+    "Club": 'bg-fuchsia-400',
+    "Diamond": 'bg-sky-400',
+    "Spade": 'bg-emerald-400'
 }
 
 export type PokerCard = {
-suit: PokerSuit,
-value: PokerValue
+    suit: PokerSuit,
+    value: PokerValue
 }
 
 export const PokerDeckUnshuffled: PokerCard[] = [
-    ...Object.keys(PokerSuit).map((k) => 
-        Object.keys(PokerValue).map(v => 
-            ({suit: k, value: v} as PokerCard)))
-].flat()
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Ace
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Two
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Three
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Four
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Five
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Six
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Seven
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Eight
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Nine
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Ten
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Jack
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.Queen
+    },
+    {
+        suit: PokerSuit.Spade,
+        value: PokerValue.King
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Ace
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Two
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Three
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Four
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Five
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Six
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Seven
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Eight
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Nine
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Ten
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Jack
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.Queen
+    },
+    {
+        suit: PokerSuit.Club,
+        value: PokerValue.King
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Ace
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Two
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Three
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Four
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Five
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Six
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Seven
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Eight
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Nine
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Ten
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Jack
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.Queen
+    },
+    {
+        suit: PokerSuit.Heart,
+        value: PokerValue.King
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Ace
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Two
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Three
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Four
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Five
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Six
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Seven
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Eight
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Nine
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Ten
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Jack
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.Queen
+    },
+    {
+        suit: PokerSuit.Diamond,
+        value: PokerValue.King
+    }
+]
 
 export function getShuffledDeck(deck: PokerCard[]) {
     const copy = [...deck]
@@ -208,6 +406,12 @@ export function evaluateHandForUltimateX(hand: Hand): PokerHand {
         return PokerHand.Pair
     }
     return PokerHand.HighCard
+}
+
+export function getFilledHandFromDeck(hand: Hand, remainingCards: PokerCard[]) : Hand {
+    const numToDraw = hand.reduce((acc, c) => c ? acc : acc + 1, 0)
+    const drawnCards = getCardsFromDeck(numToDraw, remainingCards)
+    return hand.map((card, i) => card === undefined ? drawnCards[i] : card)
 }
 
 
