@@ -1,33 +1,7 @@
 "use client"
 
 import { PokerCardComponent } from "@/components/PokerCardComponent";
-import { PokerDeckUnshuffled, PokerCard, PokerHands, PokerValueRanks, PokerValue, PokerSuit } from "@/lib/utils";
 import { useCallback, useEffect, useState } from "react";
-
-function getShuffledDeck(deck: PokerCard[]) {
-    const copy = [...deck]
-    for (let i = deck.length - 1; i >= 0; i--) {
-        const j = Math.floor(Math.random() * i + 1);
-        [copy[i], copy[j]] = [copy[j], copy[i]];
-    }
-    return copy
-}
-
-function getHand(deck: PokerCard[]) : Hand {
-    if (deck.length < 5) throw Error('Cant make a hand with that few cards');
-    return deck.slice(0, 5) as Hand
-}
-
-function getCardsFromDeck(numCards: number, deck: PokerCard[]): Hand {
-    if (deck.length < numCards) throw Error('Cant draw that amount of cards');
-    const numShuffles = Math.floor(Math.random() * 10 + 1);
-    let randomDeck = deck;
-    for (let i = 0; i < numShuffles; i++) {
-        randomDeck = getShuffledDeck(randomDeck);
-    }
-
-    return getShuffledDeck(randomDeck).slice(0, numCards) as Hand;
-}
 
 const UltimateXHandPointValues: Record<PokerHands, number> = {
     "High Card": 0,
@@ -48,21 +22,21 @@ const UltimateXHandPointValues: Record<PokerHands, number> = {
 }
 
 const UltimateXHandMultiplierTable: Record<PokerHands, number[]> = {
-    "High Card": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    "One Pair": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    "Jacks or Better": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    "Two Pair": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    "Three of a Kind": [1, 3, 4, 5, 5, 5, 5, 5, 5, 5],
-    "Straight": [1, 3, 4, 5, 7, 8, 8, 8, 8, 8],
-    "Flush": [1, 3, 4, 6, 8, 8, 8, 8, 8, 8],
-    "Full House": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Quads": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Quads (2s, 3s, 4s)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Quads (5-10)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Quads (Js, Qs, Ks)": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Quad Aces": [1, 3, 4, 6, 7, 9, 10, 10, 10, 10],
-    "Straight Flush": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    "Royal Flush": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    "High Card": [],
+    "One Pair": [],
+    "Jacks or Better": [],
+    "Two Pair": [],
+    "Three of a Kind": [1, 3, 4, 5],
+    "Straight": [1, 3, 4, 5, 7, 8],
+    "Flush": [1, 3, 4, 6, 8],
+    "Full House": [1, 3, 4, 6, 7, 9, 10],
+    "Quads": [1, 3, 4, 6, 7, 9, 10],
+    "Quads (2s, 3s, 4s)": [1, 3, 4, 6, 7, 9, 10],
+    "Quads (5-10)": [1, 3, 4, 6, 7, 9, 10],
+    "Quads (Js, Qs, Ks)": [1, 3, 4, 6, 7, 9, 10],
+    "Quad Aces": [1, 3, 4, 6, 7, 9, 10],
+    "Straight Flush": [],
+    "Royal Flush": []
 }
 
 const UltimateXBgColors: Record<PokerHands, string> = {
@@ -83,119 +57,12 @@ const UltimateXBgColors: Record<PokerHands, string> = {
     "Royal Flush": 'bg-orange-500'
 }
 
-function evaluateHand(hand: Hand): PokerHands {
-    if (hand.some(card => card === undefined)) return PokerHands.HighCard;
-    const getRankCounts = (hand: PokerCard[]): Record<PokerValue, number> => {
-        let cards: Record<PokerValue, number> = {
-            "2": 0,
-            "3": 0,
-            "4": 0,
-            "5": 0,
-            "6": 0,
-            "7": 0,
-            "8": 0,
-            "9": 0,
-            "T": 0,
-            "J": 0,
-            "Q": 0,
-            "K": 0,
-            "A": 0
-        }
-        hand.map(card => {
-            cards[card.value] = cards[card.value] + 1 
-        })
-        return cards;
-    }
-
-    const isFlush = (hand: PokerCard[]) => {
-        return hand.every(card => card.suit === hand[0].suit)
-    }
-
-    const isStraight = (hand: PokerCard[]) => {
-        const copy = [...hand]
-        const sortedVals = copy.sort((a, b) => (PokerValueRanks[a.value]) - (PokerValueRanks[b.value]))
-        for (let i = 1; i < sortedVals.length; i++) {
-            if (PokerValueRanks[sortedVals[i].value] !== PokerValueRanks[sortedVals[i - 1].value] + 1) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    const isAto5 = (hand: PokerCard[]) => {
-        const copy = [...hand]
-        return copy.map(card => card.value).sort((a, b) => PokerValueRanks[a] - PokerValueRanks[b]).join("") === "2345A";
-    }
-
-    const isBroadway = (hand: PokerCard[]) => {
-        const copy = [...hand]
-        return copy.map(card => card.value).sort((a, b) => PokerValueRanks[a] - PokerValueRanks[b]).join("") === "TJQKA";
-    }
-
-    const rankCounts = getRankCounts(hand as PokerCard[]);
-    const rankCountValues = Object.values(rankCounts);
-    const flush = isFlush(hand as PokerCard[])
-    const straight = isStraight(hand as PokerCard[]) || isAto5(hand as PokerCard[])
-    const quads = rankCountValues.includes(4)
-    const trips = rankCountValues.includes(3)
-    const pair = rankCountValues.includes(2)
-    
-
-    if (flush && straight && isBroadway(hand as PokerCard[])) {
-        return PokerHands.RoyalFlush
-    }
-    if (flush && straight) {
-        return PokerHands.StraightFlush
-    }
-    if (quads && rankCounts['A'] > 1) {
-        return PokerHands.QuadAces
-    }
-    if (quads && (rankCounts['K'] > 1 || rankCounts['Q'] > 1 || rankCounts['J'] > 1)) {
-        return PokerHands.QuadsJackQueenKing
-    }
-    if (quads && (rankCounts['2'] > 1 || rankCounts['3'] > 1 || rankCounts['4'] > 1)) {
-        return PokerHands.QuadsTwosThreesFours
-    }
-    if (quads) {
-        return PokerHands.QuadsFiveToTen
-    }
-    if (trips && pair) {
-        return PokerHands.FullHouse
-    }
-    if (flush) {
-        return PokerHands.Flush
-    }
-    if (straight) {
-        return PokerHands.Straight
-    }
-    if (trips) {
-        return PokerHands.ThreeOfAKind
-    }
-    if (rankCountValues.filter(count => count === 2).length === 2) {
-        return PokerHands.TwoPair;
-    }
-    if (pair && (rankCounts['A'] > 1 || rankCounts['K'] > 1 || rankCounts['Q'] > 1 || rankCounts['J'] > 1)) {
-        return PokerHands.JacksOrBetter
-    }
-    if (pair) {
-        return PokerHands.Pair
-    }
-    return PokerHands.HighCard
-}
-
 type Holds = [boolean, boolean, boolean, boolean, boolean];
-
-type Hand = [
-    PokerCard | undefined, 
-    PokerCard | undefined, 
-    PokerCard | undefined, 
-    PokerCard | undefined, 
-    PokerCard | undefined
-]
 
 interface UltimateXOutsideHandProps {
     hand: Hand,
-    result: PokerHands | undefined
+    result: PokerHands | undefined,
+    multipliers: Record<PokerHands, number>
 }
 
 function UltimateXOutsideHand(props: UltimateXOutsideHandProps) {
