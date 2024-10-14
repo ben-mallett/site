@@ -43,7 +43,7 @@ export function PokerCardComponent(props: PokerCardComponentPropTypes) {
             <div className="self-start flex justify-center items-center">{symbol}</div>
                 <div className="flex justify-center items-center text-4xl font-semibold">{value}</div>
                 {
-                    showHold !== undefined && showHold && <div className="text-2xl font-semibold fixed">
+                    showHold !== undefined && showHold && <div className="text-2xl font-semibold absolute">
                         Held
                     </div>
                 }

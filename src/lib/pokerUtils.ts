@@ -30,7 +30,6 @@ export enum PokerHand {
     Straight = "Straight",
     Flush = "Flush",
     FullHouse = "Full House",
-    Quads = "Quads",
     QuadsTwosThreesFours = "Quads (2s, 3s, 4s)",
     QuadsFiveToTen = "Quads (5-10)",
     QuadsJackQueenKing = "Quads (Js, Qs, Ks)",

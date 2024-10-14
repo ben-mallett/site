@@ -13,10 +13,9 @@ const UltimateXHandPointValues: Record<PokerHand, number> = {
     "Straight": 20,
     "Flush": 25,
     "Full House": 35,
-    "Quads": 125,
-    "Quads (2s, 3s, 4s)": 200,
     "Quads (5-10)": 125,
     "Quads (Js, Qs, Ks)": 125,
+    "Quads (2s, 3s, 4s)": 200,
     "Quad Aces": 400,
     "Straight Flush": 250,
     "Royal Flush": 8000
@@ -31,13 +30,12 @@ const UltimateXHandMultiplierTable: Record<PokerHand, number[]> = {
     "Straight": [1, 3, 4, 5, 7, 8],
     "Flush": [1, 3, 4, 6, 8],
     "Full House": [1, 3, 4, 6, 7, 9, 10],
-    "Quads": [1, 3, 4, 6, 7, 9, 10],
     "Quads (2s, 3s, 4s)": [1, 3, 4, 6, 7, 9, 10],
     "Quads (5-10)": [1, 3, 4, 6, 7, 9, 10],
     "Quads (Js, Qs, Ks)": [1, 3, 4, 6, 7, 9, 10],
     "Quad Aces": [1, 3, 4, 6, 7, 9, 10],
-    "Straight Flush": [1],
-    "Royal Flush": [0]
+    "Straight Flush": [1, 2],
+    "Royal Flush": [1, 2]
 }
 
 const UltimateXHandMultiplierEffectTable: Record<PokerHand, PokerHand[]> = {
@@ -46,16 +44,15 @@ const UltimateXHandMultiplierEffectTable: Record<PokerHand, PokerHand[]> = {
     "Jacks or Better": [PokerHand.TwoPair, PokerHand.ThreeOfAKind],
     "Two Pair": [PokerHand.Straight, PokerHand.Flush],
     "Three of a Kind": [PokerHand.Straight, PokerHand.Flush, PokerHand.FullHouse],
-    "Straight": [PokerHand.QuadAces, PokerHand.Quads, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse],
-    "Flush": [PokerHand.QuadAces, PokerHand.Quads, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse],
-    "Full House": [PokerHand.QuadAces, PokerHand.Quads, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing],
-    "Quads": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Quads (2s, 3s, 4s)": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.Quads, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Quads (5-10)": [PokerHand.QuadAces, PokerHand.Quads, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Quads (Js, Qs, Ks)": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.Quads, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Quad Aces": [PokerHand.Quads, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Straight Flush": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
-    "Royal Flush": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush]
+    "Straight": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse],
+    "Flush": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse],
+    "Full House": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing],
+    "Quads (2s, 3s, 4s)": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
+    "Quads (5-10)": [PokerHand.QuadAces, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
+    "Quads (Js, Qs, Ks)": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush],
+    "Quad Aces": [PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush, PokerHand.StraightFlush],
+    "Straight Flush": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush, PokerHand.RoyalFlush],
+    "Royal Flush": [PokerHand.QuadAces, PokerHand.QuadsFiveToTen, PokerHand.QuadsTwosThreesFours, PokerHand.QuadsJackQueenKing, PokerHand.FullHouse, PokerHand.Straight, PokerHand.Flush, PokerHand.StraightFlush]
 }
 
 const UltimateXBgColors: Record<PokerHand, string> = {
@@ -67,41 +64,12 @@ const UltimateXBgColors: Record<PokerHand, string> = {
     "Straight": 'bg-fuchsia-300',
     "Flush": 'bg-fuchsia-500',
     "Full House": 'bg-rose-400',
-    "Quads": 'bg-yellow-600',
     "Quads (2s, 3s, 4s)": 'bg-yellow-600',
     "Quads (5-10)": 'bg-yellow-600',
     "Quads (Js, Qs, Ks)": 'bg-yellow-600',
     "Quad Aces": 'bg-pink-500',
     "Straight Flush": 'bg-blue-500',
     "Royal Flush": 'bg-orange-500'
-}
-
-interface UltimateXOutsideHandProps {
-    hand: Hand,
-    result: PokerHand | undefined,
-    multiplier: number
-}
-
-function UltimateXOutsideHand(props: UltimateXOutsideHandProps) {
-    const { hand, result, multiplier } = props;
-    const resultVal = result ? UltimateXHandPointValues[result] : 0 
-    
-    return (
-        <div className="flex gap-2 justify-center items-center">
-            {
-                result && (resultVal !== 0) &&  (
-                    <div className={`border border-2 border-black px-4 py-1 rounded-sm fixed opacity-85 text-xl font-semibold ${UltimateXBgColors[result]}`}>
-                        {result} | {UltimateXHandPointValues[result]} x {multiplier} = {UltimateXHandPointValues[result] * multiplier}
-                    </div>
-                )
-            }
-            {
-                hand.map((card, i) => (
-                    card ? <PokerCardComponent key={i} card={card} size={'xs'}/> : <div key={i} className="w-20 h-32 border border-black border-2 bg-orange-300"/>
-                ))
-            }
-        </div>
-    )
 }
 
 export default function UltimateX() {
@@ -114,7 +82,6 @@ export default function UltimateX() {
         "Straight": 0,
         "Flush": 0,
         "Full House": 0,
-        "Quads": 0,
         "Quads (2s, 3s, 4s)": 0,
         "Quads (5-10)": 0,
         "Quads (Js, Qs, Ks)": 0,
@@ -152,44 +119,68 @@ export default function UltimateX() {
         })
     }
 
-    const updateMultipliersFromCurrentHand = (hand: PokerHand) => {
-        const value = UltimateXHandPointValues[hand]
-        const updatedMultiplierIndices = {
-            ...multiplierIndices
-        }
-        const increaseMultipliers = (hand: PokerHand) => {
-            const nextIndex = Math.min(updatedMultiplierIndices[hand] + 1, UltimateXHandMultiplierTable[hand].length - 1)
-            updatedMultiplierIndices[hand] = nextIndex
-        }
-        UltimateXHandMultiplierEffectTable[hand].forEach((h) => increaseMultipliers(h))
-        if (value > 0) {
-            setShowMultiplierWidget(true)
-        }
-        setMultiplierIndices(updatedMultiplierIndices);
+    const updateMultipliers = (prevHand: PokerHand, nextHand: PokerHand) => {
+        setMultiplierIndices((prev) => {
+            const value = UltimateXHandPointValues[nextHand]
+            const updatedMultiplierIndices = {
+                ...prev
+            }
+            const increaseMultipliers = (hand: PokerHand) => {
+                const nextIndex = Math.min(updatedMultiplierIndices[hand] + 1, UltimateXHandMultiplierTable[hand].length - 1)
+                updatedMultiplierIndices[hand] = nextIndex
+            }
+            updatedMultiplierIndices[prevHand] = 0;
+            outsideHandsResults.forEach((h) => {
+                if (h) updatedMultiplierIndices[h] = 0;
+            })
+            UltimateXHandMultiplierEffectTable[nextHand].forEach((h) => increaseMultipliers(h))
+            if (value > 0) {
+                setShowMultiplierWidget(true)
+            }
+            return updatedMultiplierIndices
+        })
     }
 
+    useEffect(() => {
+        console.log(multiplierIndices)
+    }, [multiplierIndices])
+
     const dealFromNewDeck = () => {
+        setMultiplierIndices((prev) => {
+            const copied = {
+                ...prev
+            }
+            copied[activeHandResult] = 0;
+
+            outsideHandsResults.forEach((h) => {
+                if (h !== undefined) copied[h] = 0;
+            })
+            return copied;
+        })
+        
+        
         const newDeck = getShuffledDeck(activeDeck);
         setActiveDeck(newDeck);
-
+        
         const newHand = getHandFromDeck(newDeck);
         const dealtHand = evaluateHandForUltimateX(newHand);
-
-        updateMultipliersFromCurrentHand(dealtHand);
-
+        
+        updateMultipliers(activeHandResult, dealtHand);
+        
         setActiveHandResult(dealtHand);
         setActiveHand(newHand);
         setActiveHolds(defaultHolds);
-
+        
         setOutsideHands(new Array(numOutsideHands).fill(defaultOutsideHand));
         setScore((score) => (score - 50));
-
+        
         setOutsideHandsResults(new Array(numOutsideHands).fill(undefined));
-
+        
         setFreezeInput(false);
         setDealNew(false);
+        
+        setWonValue(0);
 
-        setWonValue(0)
     }
 
     const fillRemainingCards = (deck: PokerCard[]) => {
@@ -219,6 +210,7 @@ export default function UltimateX() {
         const activeHandResult = evaluateHandForUltimateX(filledActive)
         const outsideHandResults = finishedOutsideHands.map((hand) => evaluateHandForUltimateX(hand));
         const outsideHandsPointValue = outsideHandResults.reduce((acc, c) => acc + UltimateXHandPointValues[c] * UltimateXHandMultiplierTable[c][multiplierIndices[c]], 0)
+
         const pointValue = (
             UltimateXHandPointValues[activeHandResult] 
             * UltimateXHandMultiplierTable[activeHandResult][multiplierIndices[activeHandResult]]
@@ -228,16 +220,7 @@ export default function UltimateX() {
         setWonValue(pointValue)
         setOutsideHands(finishedOutsideHands)
         setOutsideHandsResults(outsideHandResults)
-        setMultiplierIndices((prev) => {
-            const copied = {
-                ...prev
-            }
-            copied[activeHandResult] = 0;
-            outsideHandResults.forEach((h) => {
-                copied[h] = 0;
-            })
-            return copied;
-        })
+
         if (!isNaN(score) && !isNaN(pointValue)) setScore((score) => score + pointValue)
         setDealNew(true);
     }
@@ -248,7 +231,7 @@ export default function UltimateX() {
         } else {
             fillRemainingCards(activeDeck);
         }
-    }, [dealFromNewDeck, fillRemainingCards, activeDeck, dealNew]);
+    }, [dealFromNewDeck, fillRemainingCards, activeDeck, dealNew, outsideHandsResults, activeHandResult]);
 
     useEffect(() => {
         const handleKeydown = (e: KeyboardEvent) => {
@@ -297,64 +280,72 @@ export default function UltimateX() {
     useEffect(() => {
         if (!freezeInput) setOutsideHands(new Array(numOutsideHands).fill(activeHand.map((card, i) => activeHolds[i] ? card : undefined)))
     }, [activeHolds, activeHand, freezeInput])
-    const leftSide = Object.keys(UltimateXHandPointValues).filter(e => UltimateXHandPointValues[e as PokerHand] > 0).slice(0, Math.floor((Object.keys(UltimateXHandPointValues).length - 1) / 2));
+
+    const possibleHands = Object.keys(UltimateXHandPointValues).filter(e => UltimateXHandPointValues[e as PokerHand] > 0);
+    const rightSide = possibleHands.slice(0, Math.floor(possibleHands.length / 2)).reverse();
+    const leftSide = possibleHands.slice(Math.floor(possibleHands.length / 2)).reverse();
 
     return (
         <div className="w-screen h-screen grid grid-cols-5 gap-2 justify-center items-start">
             <div className="w-full h-full col-start-1 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
                 {
                     leftSide.map((e) => (
-                        <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start p-2">
-                            <div className="text-3xl">{e}</div>
-                            <div className="text-3xl">{UltimateXHandPointValues[e as PokerHand]} x {UltimateXHandMultiplierTable[e as PokerHand][multiplierIndices[e as PokerHand]]}</div>
+                        <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 border border-black border-2 rounded-md flex flex-col justify-center items-center py-2 px-4">
+                            <div className="text-2xl">{e}</div>
+                            <div className="text-2xl">{UltimateXHandPointValues[e as PokerHand]} x {UltimateXHandMultiplierTable[e as PokerHand][multiplierIndices[e as PokerHand]]}</div>
                         </div>
                     ))
                 }
             </div>
-            {
-                Object.keys(UltimateXHandPointValues).slice(Math.floor((Object.keys(UltimateXHandPointValues).length - 1) / 2))
-            }
-            <div className="col-start-2 col-span-3 grid grid-cols-3 gap-8 justify-center items-center p-2">
+            <div className="w-full col-start-2 col-span-3 grid grid-cols-3 gap-8 justify-center items-center p-8">
                 {
-                    outsideHands.map((hand, i) => {
-                        return <UltimateXOutsideHand key={i} hand={hand} result={outsideHandsResults[i]} multiplier={outsideHandsResults[i] ? UltimateXHandMultiplierTable[outsideHandsResults[i]][multiplierIndices[outsideHandsResults[i]]] : 1}/>
+                    outsideHands.map((hand, i) => { 
+                        const result = outsideHandsResults[i]
+                        const multiplier = result !== undefined ? UltimateXHandMultiplierTable[result][multiplierIndices[result]] : undefined;
+                        return (
+                            <div key={i} className="flex gap-2 justify-center items-center relative">
+                                {
+                                    result && UltimateXHandPointValues[result] > 0 && (
+                                        <div className={`border border-2 border-black px-4 py-1 bottom-2 rounded-sm absolute opacity-85 text-xl font-semibold ${UltimateXBgColors[result]}`}>
+                                            {result} | {UltimateXHandPointValues[result]} {multiplier !== undefined ? `x ${multiplier} = ${UltimateXHandPointValues[result] * multiplier}` : ''}
+                                        </div>
+                                    )
+                                }
+                                {
+                                    hand.map((card, i) => (
+                                        card ? <PokerCardComponent key={i} card={card} size={'xs'}/> : <div key={i} className="w-20 h-32 border border-black border-2 bg-orange-300"/>
+                                    ))
+                                }
+                            </div>
+                        )
                     })
                 }
             </div>
             <div className="w-full h-full col-start-5 row-span-2 flex flex-col justify-center items-center gap-4 p-8">
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Full House</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.FullHouse]} x{UltimateXHandMultiplierTable[PokerHand.FullHouse][multiplierIndices[PokerHand.FullHouse]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Flush</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.Flush]} x{UltimateXHandMultiplierTable[PokerHand.Flush][multiplierIndices[PokerHand.Flush]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Straight</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.Straight]} x{UltimateXHandMultiplierTable[PokerHand.Straight][multiplierIndices[PokerHand.Straight]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Three of a Kind</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.ThreeOfAKind]} x{UltimateXHandMultiplierTable[PokerHand.ThreeOfAKind][multiplierIndices[PokerHand.ThreeOfAKind]]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Two Pair</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.TwoPair]}</div>
-                </div>
-                <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 flex justify-center items-center border border-black border-2 rounded-md flex flex-col justify-center items-start pt-4">
-                    <div className="text-3xl">Jacks or Better</div>
-                    <div className="text-3xl">{UltimateXHandPointValues[PokerHand.JacksOrBetter]}</div>
-                </div>
+                {
+                    rightSide.map((e) => (
+                        <div className="bg-blue-500 text-yellow-200 w-4/5 h-4/5 border border-black border-2 rounded-md flex flex-col justify-center items-center py-2 px-4">
+                            <div className="text-2xl">{e}</div>
+                            <div className="text-2xl">{UltimateXHandPointValues[e as PokerHand]} x {UltimateXHandMultiplierTable[e as PokerHand][multiplierIndices[e as PokerHand]]}</div>
+                        </div>
+                    ))
+                }
             </div>
-            <div className='col-start-2 col-span-3 w-full flex items-end justify-center gap-10'>
+            <div className='col-start-2 col-span-3 w-full flex items-end justify-center gap-10 p-8 relative'>
+                {
+                    activeHandResult !== undefined && (
+                        <div className={`border border-2 border-black px-4 py-1 bottom-2 rounded-sm absolute opacity-85 text-xl font-semibold ${UltimateXBgColors[activeHandResult]}`}>
+                            {activeHandResult} | {UltimateXHandPointValues[activeHandResult] * UltimateXHandMultiplierTable[activeHandResult][multiplierIndices[activeHandResult]]}
+                        </div>
+                    )
+                }
                 {
                     activeHand.map((card, i) => {
                         return (
                         <div key={i} className={`cursor-pointer`} onClick={() => toggleHold(i)}>
                             <div className={`flex flex-col justify-center items-center`}>
                                 {
-                                    card && <PokerCardComponent card={card} size='md' showHold={activeHolds[i]}/>
+                                    card && <PokerCardComponent card={card} size='sm' showHold={activeHolds[i]}/>
                                 }
                             </div>
                         </div>
@@ -367,12 +358,12 @@ export default function UltimateX() {
                 </div>
             }
             {
-                activeHandResult !== undefined && <div className={`text-2xl font-semibold col-start-2 flex justify-center items-center w-full h-full`}>
-                    {activeHandResult} | {UltimateXHandPointValues[activeHandResult] * UltimateXHandMultiplierTable[activeHandResult][multiplierIndices[activeHandResult]]}
+                <div className="col-start-2 flex justify-end items-center h-full text-4xl font-semibold text-red-500">
+                    Bet: $50
                 </div>
             }
             <div className="col-start-3 col-span-1 flex flex-col gap-2 justify-center items-center">
-                <div className={`${score < 0 ? 'text-red-600' : 'text-emerald-600'} font-semibold text-4xl`}>${score}</div>
+                <div className={`${score < 0 ? 'text-red-500' : 'text-emerald-500'} font-semibold text-4xl`}>${score}</div>
                 <div
                     className="cursor-pointer font-semibold mb-10 border border-2 border-black bg-orange-500 px-12 py-2 text-2xl rounded-md" 
                     onClick={() => handleDeal()} 
@@ -382,7 +373,7 @@ export default function UltimateX() {
             </div>
             {
                 wonValue > 0 && (
-                    <div className="col-start-4 flex justify-center items-center h-full text-2xl font-semibold text-emerald-500">
+                    <div className="col-start-4 flex justify-start items-center h-full text-4xl font-semibold text-emerald-500">
                         + ${wonValue}
                     </div>
                 )
