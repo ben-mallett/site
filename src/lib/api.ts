@@ -150,6 +150,17 @@ const SHOWCASE: ShowcaseEntry[] = [
         items: variants.map((variant) => item(variant.name, variant.summary, variant.id)),
     },
     // Blackjack
+    {
+        kind: "category",
+        id: "blackjack",
+        title: "Blackjack",
+        description: "A full game on up to five spots, and a trainer for keeping the count while you play it.",
+        countLabel: "2 demos",
+        items: [
+            item("Blackjack", "A six-deck game on up to five spots, with the count one key away.", "blackjack"),
+            item("Hi-Lo Trainer", "Tag single cards, keep a running count at speed, and convert it to a true count.", "hi-lo-trainer"),
+        ],
+    },
     // Hold-em
     {
         kind: "item",

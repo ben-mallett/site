@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { AutomatonRunner } from '@/components/AutomatonRunner'
 import { PageShell } from '@/components/PageShell'
+import { CardCountingMath } from '@/components/casinoMath/CardCountingMath'
 import { Barcode, CellReveal, Display, Hazard, Label, Tag } from '@/components/theme'
 import { HoldemMath } from '@/components/casinoMath/HoldemMath'
 import { getPostById, getAllPosts, getSeriesTitle } from '@/lib/api'
@@ -11,6 +12,7 @@ const POST_SECTIONS: Record<string, () => JSX.Element> = {
   // Video poker
   'video-poker-math': VideoPokerMath,
   // Blackjack
+  'card-counting-math': CardCountingMath,
   // Hold-em
   'texas-hold-em-math': HoldemMath,
 }
