@@ -1,87 +1,80 @@
-import { Header } from "@/components/Header";
 import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
-import { getRandomBgColor } from "@/lib/utils";
-import { getAllPosts, getAllShowcaseItems } from "@/lib/api";
+import { PageShell } from "@/components/PageShell";
+import { BlogEntryCard } from "@/components/BlogEntryCard";
+import { ShowcaseEntryCard } from "@/components/ShowcaseEntryCard";
+import { Body, Button, CellReveal, Display, Divider, Hazard, Label, LifeField, Panel, Slop } from "@/components/theme";
+import { getBlogEntries, getShowcaseEntries } from "@/lib/api";
 
 export default async function Home() {
-  const postsFull = await getAllPosts()
-  const postsPreview = postsFull.slice(0, 3)
-  const showcaseItemsFull = await getAllShowcaseItems()
-  const showcasePreview = showcaseItemsFull.slice(0, 3)
+  const entries = await getBlogEntries()
+  const showcaseEntries = await getShowcaseEntries()
 
   return (
-    <main>
-      <Header/>
-      <div className="w-full h-full pt-10 flex flex-col justify-center items-center gap-6 px-10">
-        <h1 className="text-6xl text-center">Hey! I&#39;m Ben</h1>
-        <div className="w-4/5/3 text-4xl text-center">
-          Experienced professional with a passion for building things. 
-        </div>
-        <div className="text-center w-full xl:w-2/3 text-2xl flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 md:gap-12">
-          <div>Software Engineer</div>
-          <div>Computer Scientist</div>
-          <div>Lifelong Learner</div>
-        </div>
-        <div className="w-1/2 flex gap-6 justify-center items-center">
-          <Link className="hover-shadow-lg" href="/resume.pdf">
-            <span className="text-2xl font-semibold w-1/4 border border-black border-2 px-2 py-1 bg-blue-300">resume</span>
-          </Link>
-          <Link className="hover-shadow-lg" href="/contact">
-            <span className="text-2xl font-semibold w-1/4 border border-black border-2 px-2 py-1 bg-green-300">contact</span>
-          </Link>
-        </div>
-        <div className="flex flex-col lg:flex-row justify-start items-start gap-10">
-          <div className="flex flex-col justify-start items-center pt-10">
-            <h2>Recent Blogposts</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-6 p-6">
-              {
-                postsPreview.map((post, i) => {
-                  const bgColor = getRandomBgColor()
-                  return (
-                    <Link key={i} href={`/blog/${post.id}`}>
-                      <div className={`w-[200px] h-[200px] border border-black border-2 hover-shadow-sm flex justify-center items-center ${bgColor} text-2xl`}>
-                        {post.title}
-                      </div>
-                    </Link>
-                  )
-                })
-              }
-              <Link href='/blog'>
-                <div className="w-[200px] h-[200px] bg-white border border-black border-2 flex justify-center items-center hover-shadow-sm text-2xl p-2">
-                  &rarr;
-                  <br/>
-                  To the Blog
-                </div>
-              </Link>
+    <PageShell className="flex flex-col gap-16">
+      <CellReveal as="section" order="diagonal" spread={900} className="flex flex-col gap-8 pt-6">
+        <Label index="00" decode>Profile</Label>
+        <Display as="h1" size="xl">
+          <Slop face="wide">Hey</Slop>
+          <Slop face="serif">! </Slop>
+          <Slop face="condensed">I&apos;m </Slop>
+          <Slop face="outline">B</Slop>
+          <Slop face="pixel">e</Slop>
+          <Slop face="wide">n</Slop>
+        </Display>
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
+          <div className="flex flex-col gap-8">
+            <Body className="max-w-2xl text-lg md:text-xl">
+              Experienced professional with a passion for building things.
+            </Body>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href="/resume.pdf">Resume</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="/contact">Contact</Link>
+              </Button>
             </div>
           </div>
-          <div className="flex flex-col justify-start items-center pt-10">
-            <h2>Recent Projects</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 justify-center items-center gap-6 p-6">
-              {
-                showcasePreview.map((showcase, i) => {
-                  const bgColor = getRandomBgColor()
-                  return (
-                    <Link key={i} href={`/showcase/${showcase.slug}`}>
-                      <div className={`w-[200px] h-[200px] border border-black border-2 hover-shadow-sm flex justify-center items-center ${bgColor} text-2xl`}>
-                        {showcase.title}
-                      </div>
-                    </Link>
-                  )
-                })
-              }
-              <Link href='/blog'>
-                <div className="w-[200px] h-[200px] bg-white border border-black border-2 flex justify-center items-center hover-shadow-sm text-2xl p-2">
-                  &rarr;
-                  <br/>
-                  To the Showroom
-                </div>
-              </Link>
+          <Panel label="Cellular field" meta="B3/S23" bodyClassName="p-0">
+            <div className="h-28">
+              <LifeField />
             </div>
-          </div>
+          </Panel>
         </div>
-      </div>
-    </main>
+        <Hazard className="h-2 text-m-accent" />
+        <dl className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          {[
+            ["Class", "Software Engineer"],
+            ["Specialty", "Computer Scientist"],
+            ["Status", "Lifelong Learner"],
+          ].map(([label, value]) => (
+            <div key={label} className="flex flex-col gap-2 border-l border-m-line/25 pl-3">
+              <dt><Label decode>{label}</Label></dt>
+              <dd><Display as="span" size="sm" width="condensed" decode>{value}</Display></dd>
+            </div>
+          ))}
+        </dl>
+      </CellReveal>
+
+      <section className="flex flex-col gap-6">
+        <Divider label="Recent blogposts" index={1} ticks />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {entries.slice(0, 3).map((entry, i) => <BlogEntryCard key={entry.kind === "post" ? entry.post.id : entry.id} entry={entry} index={i} compact />)}
+        </div>
+        <Button asChild variant="ghost" className="self-start">
+          <Link href="/blog">To the blog &rarr;</Link>
+        </Button>
+      </section>
+
+      <section className="flex flex-col gap-6">
+        <Divider label="Recent projects" index={2} ticks />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {showcaseEntries.slice(0, 3).map((entry, i) => <ShowcaseEntryCard key={entry.kind === "item" ? entry.item.slug : entry.id} entry={entry} index={i} />)}
+        </div>
+        <Button asChild variant="ghost" className="self-start">
+          <Link href="/showcase">To the showroom &rarr;</Link>
+        </Button>
+      </section>
+    </PageShell>
   );
 }

@@ -1,7 +1,8 @@
 "use client"
 
-import { Header } from '@/components/Header';
-import React, { useState, useEffect, useRef, RefObject } from 'react';
+import { PageShell } from '@/components/PageShell';
+import { Body, Button, CellReveal, Display, Field, Input, Panel, Slop, Textarea } from '@/components/theme';
+import React, { useState, useRef } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { WindowConway } from '@/components/Conway';
 import emailjs from '@emailjs/browser';
@@ -10,6 +11,7 @@ import emailjs from '@emailjs/browser';
 export default function ContactPage() {
     const form = useRef<React.LegacyRef<HTMLInputElement>>();
     const { toast } = useToast()
+    const [sending, setSending] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -65,6 +67,7 @@ export default function ContactPage() {
         setErrors(newErrors);
 
         if (valid) {
+            setSending(true);
             emailjs
             .sendForm(process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID as string, process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID as string, form.current as any, {
                 publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY as string,
@@ -88,75 +91,44 @@ export default function ContactPage() {
                     })
                     console.log('FAILED...', error);
                 },
-            );
+            )
+            .finally(() => setSending(false));
         }
     };
 
     return (
-        <main>
-            <div className="w-full h-screen opacity-15 absolute z-0">
-                <WindowConway settings={false}/>
+        <PageShell
+            backdrop={<div className="h-full w-full opacity-20"><WindowConway settings={false}/></div>}
+            className="flex flex-col items-center justify-center gap-8"
+        >
+            <div className="flex w-full max-w-xl flex-col items-center gap-4 text-center">
+                <Display as="h1" size="lg">
+                    <Slop face="wide">So you </Slop>
+                    <Slop face="serif">want </Slop>
+                    <Slop face="condensed">my </Slop>
+                    <Slop face="outline">num</Slop>
+                    <Slop face="pixel">ber...</Slop>
+                </Display>
+                <Body>Write your name, email, and a quick message below and I will get back to you.</Body>
             </div>
-            <div className="z-40 relative w-full h-full">
-                <Header/>
-            </div>
-            <div className='w-full h-full md:pt-20 flex flex-col justify-center items-center px-2 z-10 relative'>
-                <h1 className="text-center">So you want my number...</h1>
-                <p className="px-10 py-5 text-center">Write your name, email, and a quick message below and I will get back to you.</p>
-                <form ref={form as any} onSubmit={handleSubmit} className="flex flex-col justify-start items-center w-full sm:w-[600px] bg-purple-400 p-5 md:p-10 border border-black border-2">
-                    <div className="flex flex-col justify-start items-start w-full py-2 h-1/5">
-                        <label>
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="w-full h-10 px-4 border border-black border-2"
-                        />
-                        {
-                            errors.name && 
-                            <span className="error">{errors.name}</span>
-                        }
-                    </div>
-                    <div className="flex flex-col justify-start items-start w-full py-2 md:py-5 h-1/5 focus:scale-115">
-                        <label>
-                            Email
-                        </label>
-                        <input
-                            type="text"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full h-10 px-4 border border-black border-2 focus:scale-115"
-                        />
-                        {
-                            errors.email && 
-                            <span className="error">{errors.email}</span>
-                        }
-                    </div>
-                    <div className="flex flex-col justify-start items-start w-full py-2 md:py-5 h-2/5">
-                        <label>Message</label>
-                        <textarea
-                            name="message"
-                            value={formData.message}
-                            onChange={handleChange}
-                            className="w-full h-20 px-4 border border-black border-2 focus:scale-115"
-                        />
-                        {
-                            errors.message && 
-                            <span className="error">{errors.message}</span>
-                        }
-                    </div>
-                    <button 
-                        type="submit"
-                        className='flex p-2 hover-shadow-lg bg-emerald-400 border border-2 border-black w-1/2 justify-center items-center'
-                    >
-                        Submit
-                    </button>
+            <CellReveal order="rows" spread={700} className="w-full max-w-xl">
+            <Panel accent brackets className="w-full bg-m-surface/90 backdrop-blur" bodyClassName="p-5 md:p-8">
+                <form ref={form as any} onSubmit={handleSubmit} className="flex flex-col gap-6">
+                    <Field label="Name" htmlFor="name" error={errors.name}>
+                        <Input id="name" type="text" name="name" value={formData.name} onChange={handleChange} />
+                    </Field>
+                    <Field label="Email" htmlFor="email" error={errors.email}>
+                        <Input id="email" type="text" name="email" value={formData.email} onChange={handleChange} />
+                    </Field>
+                    <Field label="Message" htmlFor="message" error={errors.message}>
+                        <Textarea id="message" name="message" value={formData.message} onChange={handleChange} />
+                    </Field>
+                    <Button type="submit" size="lg" className="self-start">
+                        {sending ? "Sending" : "Contact me"}
+                    </Button>
                 </form>
-            </div>
-        </main>
+            </Panel>
+            </CellReveal>
+        </PageShell>
     );
 };
