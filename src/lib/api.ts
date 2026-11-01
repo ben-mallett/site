@@ -13,6 +13,7 @@ import rehypePrettyCode from 'rehype-pretty-code'
 import { remarkEmbed } from './automatonEmbed'
 import { EMBED_BLOCKS } from './embeds'
 import type { RandomLinks } from './utils'
+import { variants } from './videoPoker'
 
 const postsDir = path.join(process.cwd(), '_posts')
 
@@ -140,6 +141,14 @@ const SHOWCASE: ShowcaseEntry[] = [
         ],
     },
     // Video poker
+    {
+        kind: "category",
+        id: "video-poker",
+        title: "Video Poker",
+        description: "Five games with the published paytables, from classic Jacks or Better to the Ultimate X multipliers.",
+        countLabel: `${variants.length} games`,
+        items: variants.map((variant) => item(variant.name, variant.summary, variant.id)),
+    },
     // Blackjack
     // Hold-em
 ]
