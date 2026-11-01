@@ -1,0 +1,171 @@
+{
+  "rounds": 200000029,
+  "flatEdge": -0.006439214066313961,
+  "flatDeviation": 1.1604117604392223,
+  "byCount": [
+    {
+      "trueCount": -6,
+      "frequency": 0.026801296113812063,
+      "edge": -0.045538276128396754,
+      "tenDensity": 0.25821821977579956,
+      "insuranceEdge": -0.2337712384970214
+    },
+    {
+      "trueCount": -5,
+      "frequency": 0.02125116191858152,
+      "edge": -0.03166249944414812,
+      "tenDensity": 0.27333939400657387,
+      "insuranceEdge": -0.1853615836343084
+    },
+    {
+      "trueCount": -4,
+      "frequency": 0.03902668434113077,
+      "edge": -0.025043438221381317,
+      "tenDensity": 0.28099257582995735,
+      "insuranceEdge": -0.15926383322601065
+    },
+    {
+      "trueCount": -3,
+      "frequency": 0.06745585521890099,
+      "edge": -0.019187879363788456,
+      "tenDensity": 0.2887132120625763,
+      "insuranceEdge": -0.13516332675926487
+    },
+    {
+      "trueCount": -2,
+      "frequency": 0.12419663699148764,
+      "edge": -0.013133888348281199,
+      "tenDensity": 0.2964970146381909,
+      "insuranceEdge": -0.10919266433938243
+    },
+    {
+      "trueCount": -1,
+      "frequency": 0.18943419253204208,
+      "edge": -0.008507293455216275,
+      "tenDensity": 0.30374864406110513,
+      "insuranceEdge": -0.08952482717151124
+    },
+    {
+      "trueCount": 0,
+      "frequency": 0.26607907141853465,
+      "edge": -0.0038062740062532532,
+      "tenDensity": 0.31029492955082283,
+      "insuranceEdge": -0.06679445958665828
+    },
+    {
+      "trueCount": 1,
+      "frequency": 0.11783978791323076,
+      "edge": 0.001585096818515611,
+      "tenDensity": 0.31864574481277785,
+      "insuranceEdge": -0.04264062611336872
+    },
+    {
+      "trueCount": 2,
+      "frequency": 0.06475320561078518,
+      "edge": 0.006967376060014935,
+      "tenDensity": 0.3262967783678492,
+      "insuranceEdge": -0.0204925632971275
+    },
+    {
+      "trueCount": 3,
+      "frequency": 0.036711219676873144,
+      "edge": 0.011117444323909103,
+      "tenDensity": 0.33396309248705675,
+      "insuranceEdge": 0.003906319908239715
+    },
+    {
+      "trueCount": 4,
+      "frequency": 0.020863611974776264,
+      "edge": 0.015627445195858916,
+      "tenDensity": 0.341702263074953,
+      "insuranceEdge": 0.024193706334794784
+    },
+    {
+      "trueCount": 5,
+      "frequency": 0.011814728286864399,
+      "edge": 0.01912527836014873,
+      "tenDensity": 0.3495335700879103,
+      "insuranceEdge": 0.04476985023608818
+    },
+    {
+      "trueCount": 6,
+      "frequency": 0.00645072406464501,
+      "edge": 0.024530576020524823,
+      "tenDensity": 0.35738840996364796,
+      "insuranceEdge": 0.07183212267958031
+    },
+    {
+      "trueCount": 7,
+      "frequency": 0.0035600244837964497,
+      "edge": 0.027202056165335917,
+      "tenDensity": 0.36523345452673817,
+      "insuranceEdge": 0.09259344397958715
+    },
+    {
+      "trueCount": 8,
+      "frequency": 0.0037617994545390793,
+      "edge": 0.03407743633367005,
+      "tenDensity": 0.3802134815163625,
+      "insuranceEdge": 0.14174969215269226
+    }
+  ],
+  "spreadResults": [
+    {
+      "name": "1 to 4",
+      "evPerHundred": -0.19578172161165036,
+      "deviationPerHundred": 17.913106599431824,
+      "averageBet": 1.3142395294352682,
+      "edgeOnAction": -0.0014896958828789623,
+      "handsToOvercome": 837138.9217405177,
+      "bankrollFor5Percent": null
+    },
+    {
+      "name": "1 to 8",
+      "evPerHundred": 0.36886694651429275,
+      "deviationPerHundred": 29.158424693226646,
+      "averageBet": 1.8208117209823005,
+      "edgeOnAction": 0.0020258379395498103,
+      "handsToOvercome": 624868.5012950413,
+      "bankrollFor5Percent": 3452.4816281556095
+    },
+    {
+      "name": "1 to 12",
+      "evPerHundred": 0.759395889887596,
+      "deviationPerHundred": 36.60967005231181,
+      "averageBet": 2.038310489444979,
+      "edgeOnAction": 0.00372561439397967,
+      "handsToOvercome": 232410.1789331889,
+      "bankrollFor5Percent": 2643.6039360666814
+    }
+  ],
+  "runningCount": [
+    {
+      "dealt": 26,
+      "deviation": 4.288622501246683
+    },
+    {
+      "dealt": 52,
+      "deviation": 5.782777400994558
+    },
+    {
+      "dealt": 104,
+      "deviation": 7.314699115556661
+    },
+    {
+      "dealt": 156,
+      "deviation": 7.758410020424035
+    },
+    {
+      "dealt": 208,
+      "deviation": 7.314699115556661
+    },
+    {
+      "dealt": 234,
+      "deviation": 6.7189801706629595
+    }
+  ],
+  "s17": {
+    "rounds": 200000000,
+    "flatEdge": -0.00438795
+  }
+}
