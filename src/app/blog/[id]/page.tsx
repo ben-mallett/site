@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { AutomatonRunner } from '@/components/AutomatonRunner'
 import { PageShell } from '@/components/PageShell'
 import { Barcode, CellReveal, Display, Hazard, Label, Tag } from '@/components/theme'
+import { HoldemMath } from '@/components/casinoMath/HoldemMath'
 import { getPostById, getAllPosts, getSeriesTitle } from '@/lib/api'
 import { VideoPokerMath } from '@/components/casinoMath/VideoPokerMath'
  
@@ -11,6 +12,7 @@ const POST_SECTIONS: Record<string, () => JSX.Element> = {
   'video-poker-math': VideoPokerMath,
   // Blackjack
   // Hold-em
+  'texas-hold-em-math': HoldemMath,
 }
 
 export async function generateStaticParams() {

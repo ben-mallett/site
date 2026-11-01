@@ -151,6 +151,10 @@ const SHOWCASE: ShowcaseEntry[] = [
     },
     // Blackjack
     // Hold-em
+    {
+        kind: "item",
+        item: item("Hold-em Trainer", "Read the winner at showdown, count your outs, and call or fold against the pot odds.", "hold-em-trainer"),
+    },
 ]
 
 export const getShowcaseEntries = async () => SHOWCASE
