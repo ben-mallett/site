@@ -1,19 +1,28 @@
-"use client"
-
-import { Header } from "@/components/Header";
 import Link from "next/link";
+import { PageShell } from "@/components/PageShell";
+import { Body, Button, CellReveal, Display, Hazard, Label, LifeField, Slop } from "@/components/theme";
 
 export default function NotFound() {
   return (
-    <main>
-      <Header/>
-      <div className="flex flex-col justify-start items-center h-full w-full gap-6 pt-20 p-4">
-        <h1 className="pt-10">This is Awkward...</h1>
-        <h4>Looks like I have taken you somewhere that does not exist yet. You should head on back where you came from.</h4>
-        <Link href="/" className="hover-shadow-lg border border-black border-4 bg-red flex justify-center items-center px-10 bg-sky-300">
-          <h4>Home</h4>
-        </Link>
-      </div>
-    </main>
+    <PageShell
+      backdrop={<div className="h-full w-full opacity-30"><LifeField color="orange" cell={14} /></div>}
+      className="flex flex-col items-start justify-center gap-8"
+    >
+      <Label index="404" decode>Signal lost</Label>
+      <CellReveal order="radial" color="orange">
+      <Display as="h1" size="xl">
+        <Slop face="wide">Awk</Slop>
+        <Slop face="serif">ward</Slop>
+        <Slop face="pixel">...</Slop>
+      </Display>
+      </CellReveal>
+      <Body className="max-w-xl text-lg">
+        Looks like I have taken you somewhere that does not exist yet. You should head on back where you came from.
+      </Body>
+      <Hazard className="h-2 max-w-md text-m-orange" />
+      <Button asChild size="lg">
+        <Link href="/">Return home</Link>
+      </Button>
+    </PageShell>
   );
 }

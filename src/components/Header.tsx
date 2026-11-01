@@ -1,58 +1,102 @@
 "use client"
 
-import { MenuIcon } from "lucide-react"
-import { useState } from "react"
+import { MenuIcon, XIcon } from "lucide-react"
+import { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import Link from "next/link"
-import { getRandomLink } from "@/lib/utils"
+import { usePathname } from "next/navigation"
+import { getRandomLink, RandomLinks } from "@/lib/utils"
+import { AccentPicker, Barcode, CellReveal, Label, Slop } from "@/components/theme"
+
+const links = [
+    { href: "/blog", label: "Blog" },
+    { href: "/showcase", label: "Showcase" },
+    { href: "/contact", label: "Contact" },
+]
+
+const RandomLinksContext = createContext<RandomLinks>({ blog: [], showcase: [] })
+
+// The root layout reads the list on the server, because some pages using the header are client components.
+export const RandomLinksProvider = ({ links, children }: { links: RandomLinks; children: ReactNode }) => (
+    <RandomLinksContext.Provider value={links}>{children}</RandomLinksContext.Provider>
+)
 
 export const Header = () => {
+    const randomLinks = useContext(RandomLinksContext)
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
-    const random = getRandomLink();
+    const pathname = usePathname()
+    // Picked after mount so the server and client render the same href.
+    const [random, setRandom] = useState<string>("/blog")
+    useEffect(() => setRandom(getRandomLink(randomLinks, pathname)), [pathname, randomLinks])
+    const navLinks = [...links.slice(0, 2), { href: random, label: "Random" }, links[2]]
+
     return (
-        <div className="flex justify-between items-center w-full top-0 p-4 gap-2 relative">
-            <div className="w-full flex justify-start items-center">
-                <Link href="/" className="border border-black border-4 px-1 opacity-90 bg-yellow-300 hover-shadow-lg ">
-                    <h1>benjamin | nimajneb</h1>
+        <header className="relative z-40 border-b border-m-line/15 bg-m-bg">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+                <Link href="/" className="group flex items-center gap-4">
+                    <span className="font-m-display text-xl uppercase leading-none tracking-tight transition-colors group-hover:text-m-accent">
+                        <Slop face="wide">Benj</Slop>
+                        <Slop face="serif">amin</Slop>
+                        <Slop face="pixel"> | </Slop>
+                        <Slop face="outline">nim</Slop>
+                        <Slop face="condensed">ajneb</Slop>
+                    </span>
+                    <Barcode value="BM-01" height={16} showValue={false} className="hidden text-m-muted sm:inline-flex" />
                 </Link>
-            </div>
-            <button className={`hover-shadow-lg block md:hidden border border-black border-4`} onClick={() => setMenuOpen(true)}>
-                <MenuIcon size="35" strokeWidth={3} className="bg-sky-400"/>
-            </button>
-            <div className={`${menuOpen ? 'block' : 'hidden'}`}>
-                <div className='flex flex-col justify-stretch items-center bg-white absolute top-0 left-0 z-10 bg-white w-full h-screen'>
-                    <button className="hover-enlarge-lg border-y-2 border-black border-2 w-full bg-purple-700" onClick={() => setMenuOpen(false) }>
-                        <span className="hover-enlarge-lg w-full h-full flex justify-center items-center">X</span>
-                    </button>
-                    <Link className="w-screen h-1/4 text-2xl font-semibold w-full border border-black border-2 px-1 bg-blue-500" href="/blog" onClick={() => setMenuOpen(false)} >
-                        <span className="hover-enlarge-lg w-full h-full flex justify-center items-center">blog</span>
-                    </Link>
-                    <Link className="w-screen h-1/4 text-2xl font-semibold w-full border border-black border-2 px-1 bg-purple-500" href="/showcase" onClick={() => setMenuOpen(false)} >
-                        <span className="hover-enlarge-lg w-full h-full flex justify-center items-center">showcase</span>
-                    </Link>
-                    <Link className="w-screen h-1/4 text-2xl font-semibold w-full border border-black border-2 px-1 bg-pink-400" href={random} onClick={() => setMenuOpen(false)} >
-                        <span className="hover-enlarge-lg w-full h-full flex justify-center items-center">random</span>
-                    </Link>
-                    <Link className="w-screen h-1/4 text-2xl font-semibold w-full border border-black border-2 px-1 bg-orange-400" href="/contact" onClick={() => setMenuOpen(false)} >
-                        <span className="hover-enlarge-lg w-full h-full flex justify-center items-center">contact</span>
-                    </Link>
+
+                <div className="flex items-center gap-2">
+                <nav className="hidden items-center gap-1 md:flex">
+                    {navLinks.map(({ href, label }, i) => {
+                        const active = label !== "Random" && pathname.startsWith(href)
+                        return (
+                            <Link
+                                key={label}
+                                href={href}
+                                className={`flex items-center gap-2 px-3 py-2 font-m-mono text-xs uppercase tracking-[0.16em] transition-colors hover:bg-m-fg hover:text-m-bg ${active ? "text-m-accent" : "text-m-fg"}`}
+                            >
+                                <span className="text-m-muted">{String(i + 1).padStart(2, "0")}</span>
+                                {label}
+                            </Link>
+                        )
+                    })}
+                </nav>
+
+                <AccentPicker />
+
+                <button
+                    aria-label="Open menu"
+                    className="border border-m-line/40 p-1.5 transition-colors hover:bg-m-fg hover:text-m-bg md:hidden"
+                    onClick={() => setMenuOpen(true)}
+                >
+                    <MenuIcon size={20} />
+                </button>
                 </div>
             </div>
-            <div className="hidden md:block">
-                <div className="flex justify-end items-center gap-6 w-full">
-                    <Link className="hover-shadow-lg" href="/blog">
-                        <span className="text-2xl font-semibold w-1/4 border border-black border-2 p-1 bg-blue-500">blog</span>
-                    </Link>
-                    <Link className="hover-shadow-lg" href="/showcase">
-                        <span className="text-2xl font-semibold w-1/4 border border-black border-2 p-1 bg-purple-500">showcase</span>
-                    </Link>
-                    <Link className="hover-shadow-lg" href={random}>
-                        <span className="text-2xl font-semibold w-1/4 border border-black border-2 p-1 bg-pink-400">random</span>
-                    </Link>
-                    <Link className="hover-shadow-lg" href="/contact">
-                        <span className="text-2xl font-semibold w-1/4 border border-black border-2 p-1 bg-orange-400">contact</span>
-                    </Link>
-                </div>
-            </div>
-        </div>
+
+            {menuOpen && (
+                <CellReveal order="rows" spread={320} className="fixed inset-0 z-50 flex flex-col bg-m-bg">
+                    <div className="flex items-center justify-between border-b border-m-line/15 px-6 py-4">
+                        <Label index="00">Navigation</Label>
+                        <button
+                            aria-label="Close menu"
+                            className="border border-m-line/40 p-1.5 transition-colors hover:bg-m-fg hover:text-m-bg"
+                            onClick={() => setMenuOpen(false)}
+                        >
+                            <XIcon size={20} />
+                        </button>
+                    </div>
+                    {navLinks.map(({ href, label }, i) => (
+                        <Link
+                            key={label}
+                            href={href}
+                            onClick={() => setMenuOpen(false)}
+                            className="flex flex-1 items-end justify-between border-b border-m-line/15 px-6 pb-4 transition-colors hover:bg-m-accent hover:text-m-accent-fg"
+                        >
+                            <span className="font-m-display text-5xl font-black uppercase [font-stretch:125%]">{label}</span>
+                            <span className="font-m-mono text-xs">{String(i + 1).padStart(2, "0")}</span>
+                        </Link>
+                    ))}
+                </CellReveal>
+            )}
+        </header>
     )
 }

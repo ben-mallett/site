@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss"
 
 const config = {
-  darkMode: ["class"],
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -10,24 +9,12 @@ const config = {
 	],
   prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
@@ -40,37 +27,37 @@ const config = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+        m: {
+          bg: "rgb(var(--m-bg) / <alpha-value>)",
+          surface: "rgb(var(--m-surface) / <alpha-value>)",
+          raised: "rgb(var(--m-raised) / <alpha-value>)",
+          fg: "rgb(var(--m-fg) / <alpha-value>)",
+          muted: "rgb(var(--m-muted) / <alpha-value>)",
+          line: "rgb(var(--m-line) / <alpha-value>)",
+          accent: "rgb(var(--m-accent) / <alpha-value>)",
+          "accent-fg": "rgb(var(--m-accent-fg) / <alpha-value>)",
+          acid: "rgb(var(--m-acid) / <alpha-value>)",
+          pink: "rgb(var(--m-pink) / <alpha-value>)",
+          cyan: "rgb(var(--m-cyan) / <alpha-value>)",
+          orange: "rgb(var(--m-orange) / <alpha-value>)",
+          lilac: "rgb(var(--m-lilac) / <alpha-value>)",
+          yellow: "rgb(var(--m-yellow) / <alpha-value>)",
+          red: "rgb(var(--m-red) / <alpha-value>)",
+          blue: "rgb(var(--m-blue) / <alpha-value>)",
+          ink: "rgb(var(--m-ink) / <alpha-value>)",
+          bone: "rgb(var(--m-bone) / <alpha-value>)",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+      },
+      fontFamily: {
+        "m-display": ["var(--font-m-display)", "system-ui", "sans-serif"],
+        "m-mono": ["var(--font-m-mono)", "ui-monospace", "monospace"],
+        "m-serif": ["var(--font-m-serif)", "Georgia", "serif"],
+        "m-pixel": ["var(--font-m-pixel)", "ui-monospace", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },

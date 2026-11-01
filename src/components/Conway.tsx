@@ -1,9 +1,14 @@
 "use client"
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useWindowDimensions from '@/hooks/useWindowDimensions';
-import { Checkbox } from './ui/checkbox';
-import { Slider } from './ui/slider';
+import Link from 'next/link';
+import { Button, Checkbox, CornerBrackets, Display, Hazard, Label, Panel, Slider } from '@/components/theme';
+import { Board, buildRuleTable, cellIndex, channelsToPixel, countNeighbors, createBoard, paintPixels, seedBoard, setCell, stepBoard } from '@/lib/life';
+
+const cellColors = ['accent', 'acid', 'yellow', 'orange', 'red', 'pink', 'lilac', 'blue', 'cyan', 'bone'] as const
+type CellColor = typeof cellColors[number]
+const cellColor = (color: CellColor) => `rgb(var(--m-${color}))`
 
 type ConwayProps = {
     width: number;
@@ -23,322 +28,410 @@ export const WindowConway = ({settings} : WindowConwayProps) => {
     )
 }
 
+const DEFAULTS = {
+    delay: 75,
+    density: 20,
+    cellSize: 15,
+    surviveMin: 2,
+    surviveMax: 3,
+    birth: 3,
+}
+
+// How long one animation frame may spend on simulation, so a slow machine still draws smoothly.
+const STEP_BUDGET_MS = 10
+// Reading the clock has a cost, so it only happens between small batches of steps.
+const STEPS_PER_CLOCK_CHECK = 8
+const STATUS_INTERVAL_MS = 250
+// Speed is measured over a longer window, or a steady 13 generations per second reads as 12, then 16.
+const SPEED_WINDOW_MS = 1000
+
 const Conway = ({ width, height, settings }: ConwayProps) => {
-    const [grid, setGrid] = useState<number[]>([])
-    const [rowSize, setRowSize] = useState<number>(0)
-    const [colSize, setColSize] = useState<number>(0)
     const [diagnostics, setDiagnostics] = useState<boolean>(false)
     const [colorSwap, setColorSwap] = useState<boolean>(false)
     const [pause, setPause] = useState<boolean>(false)
-    const [prevPause, setPrevPause] = useState<boolean>(false)
-    const [miracleOfLife, setMiracleOfLife] = useState<boolean>(false)
+    const [randomBirths, setRandomBirths] = useState<boolean>(false)
     const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
     const [rounded, setRounded] = useState<boolean>(false)
-    const [drawing, setDrawing] = useState<boolean>(false)
-    const [tickRate, setTickRate] = useState<number>(75)
-    const [sparsity, setSparsity] = useState<number>(-0.3)
-    const [resolution, setResolution] = useState<number>(15)
-    const [underpopulatedThreshold, setUnderpopulatedThreshold] = useState<number>(2)
-    const [overpopulatedThreshold, setOverpopulatedThreshold] = useState<number>(3)
-    const [reproductionThreshold, setReproductionThreshold] = useState<number>(3)
-    const [activeColor, setActiveColor] = useState<string>('bg-blue-400')
-    const [activeTextColor, setActiveTextColor] = useState<string>('text-blue-400')
+    const [delay, setDelay] = useState<number>(DEFAULTS.delay)
+    const [density, setDensity] = useState<number>(DEFAULTS.density)
+    const [cellSize, setCellSize] = useState<number>(DEFAULTS.cellSize)
+    const [surviveMin, setSurviveMin] = useState<number>(DEFAULTS.surviveMin)
+    const [surviveMax, setSurviveMax] = useState<number>(DEFAULTS.surviveMax)
+    const [birth, setBirth] = useState<number>(DEFAULTS.birth)
+    const [activeColor, setActiveColor] = useState<CellColor>('accent')
+    const [status, setStatus] = useState({ generation: 0, alive: 0, speed: 0 })
 
-    /**
-     * Iniitalizes the grid state variable to contain a 1 or a 0 at each element randomly
-     */
-    const initGrid = () => {
-        const temp = []
-        const rows = Math.floor(width / resolution)
-        const cols = Math.floor(height / resolution)
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                temp.push(Math.round(Math.random() + sparsity))
+    // Settings can come from the address, which is how blog posts link to a set of rules.
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        const read = (key: string, min: number, max: number, apply: (value: number) => void) => {
+            const value = Number(params.get(key) ?? NaN)
+            if (Number.isInteger(value) && value >= min && value <= max) apply(value)
+        }
+        read('birth', 0, 8, setBirth)
+        read('surviveMin', 0, 8, setSurviveMin)
+        read('surviveMax', 0, 8, setSurviveMax)
+        read('density', 0, 100, setDensity)
+        read('delay', 0, 500, setDelay)
+        read('cellSize', 10, 20, setCellSize)
+    }, [])
+
+    const cols = Math.floor(width / cellSize)
+    const rows = Math.floor(height / cellSize)
+
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const boardRef = useRef<Board | null>(null)
+    const generationRef = useRef(0)
+    const drawingRef = useRef<{ col: number; row: number } | null>(null)
+    // Plain squares draw one pixel per cell and let the browser scale them. Round cells and
+    // neighbor counts need real pixels, so they draw at full size, and more slowly.
+    const detailed = rounded || diagnostics
+
+    // The loop reads these directly, so changing a setting never restarts it.
+    const live = useRef({ delay, pause, randomBirths, colorSwap, rounded, diagnostics, activeColor, cellSize, table: buildRuleTable({ surviveMin, surviveMax, birth }), dirty: true, colorsDirty: true })
+    useEffect(() => {
+        Object.assign(live.current, { delay, pause, randomBirths, colorSwap, rounded, diagnostics, activeColor, cellSize, table: buildRuleTable({ surviveMin, surviveMax, birth }), dirty: true, colorsDirty: true })
+    }, [activeColor, birth, cellSize, colorSwap, delay, diagnostics, pause, randomBirths, rounded, surviveMax, surviveMin])
+
+    // A new board whenever its size or starting density changes.
+    useEffect(() => {
+        if (cols <= 0 || rows <= 0) return
+        const board = createBoard(cols, rows)
+        seedBoard(board, density / 100)
+        boardRef.current = board
+        generationRef.current = 0
+        live.current.dirty = true
+        setStatus((previous) => ({ ...previous, generation: 0, alive: board.alive }))
+    }, [cols, rows, density])
+
+    // Size the canvas for the current drawing mode.
+    useEffect(() => {
+        const canvas = canvasRef.current
+        if (!canvas || cols <= 0 || rows <= 0) return
+        const scale = detailed ? (window.devicePixelRatio || 1) * cellSize : 1
+        canvas.width = cols * scale
+        canvas.height = rows * scale
+        live.current.dirty = true
+    }, [cols, rows, cellSize, detailed])
+
+    // The accent color can change at any time from the nav bar, on pages that have one.
+    useEffect(() => {
+        const observer = new MutationObserver(() => { live.current.colorsDirty = true })
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-m-accent'] })
+        return () => observer.disconnect()
+    }, [])
+
+    useEffect(() => {
+        const canvas = canvasRef.current
+        const ctx = canvas?.getContext('2d')
+        if (!canvas || !ctx) return
+
+        let frame = 0
+        let last = performance.now()
+        let backlog = 0
+        let image: ImageData | null = null
+        let pixels: Uint32Array | null = null
+        let cellPixel = 0
+        let cellCss = ''
+        let textOnCell = ''
+        let textOnEmpty = ''
+        let statusAt = last
+        let speedAt = last
+        let speed = 0
+        let speedGeneration = generationRef.current
+
+        const readColors = () => {
+            const style = getComputedStyle(canvas)
+            const { activeColor, colorSwap } = live.current
+            const color = style.getPropertyValue(`--m-${activeColor}`)
+            const background = style.getPropertyValue('--m-bg')
+            const cell = colorSwap ? background : color
+            cellPixel = channelsToPixel(cell)
+            cellCss = `rgb(${cell})`
+            textOnCell = `rgb(${colorSwap ? color : background})`
+            textOnEmpty = `rgb(${colorSwap ? background : color})`
+            live.current.colorsDirty = false
+        }
+
+        const paint = (board: Board) => {
+            const { rounded, diagnostics, cellSize } = live.current
+            if (!rounded && !diagnostics) {
+                if (!image || image.width !== board.cols || image.height !== board.rows) {
+                    image = ctx.createImageData(board.cols, board.rows)
+                    pixels = new Uint32Array(image.data.buffer)
+                }
+                paintPixels(board, pixels!, cellPixel)
+                ctx.putImageData(image, 0, 0)
+                return
+            }
+
+            const size = canvas.width / board.cols
+            ctx.setTransform(1, 0, 0, 1, 0, 0)
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.fillStyle = cellCss
+            ctx.beginPath()
+            for (let row = 0; row < board.rows; row++) {
+                for (let col = 0; col < board.cols; col++) {
+                    if (!board.cells[cellIndex(board, col, row)]) continue
+                    if (rounded) {
+                        ctx.moveTo((col + 1) * size, (row + 0.5) * size)
+                        ctx.arc((col + 0.5) * size, (row + 0.5) * size, size / 2, 0, Math.PI * 2)
+                    } else {
+                        ctx.rect(col * size, row * size, size, size)
+                    }
+                }
+            }
+            ctx.fill()
+
+            if (diagnostics) {
+                ctx.font = `${(8 / cellSize) * size}px ui-monospace, monospace`
+                ctx.textAlign = 'center'
+                ctx.textBaseline = 'middle'
+                for (let row = 0; row < board.rows; row++) {
+                    for (let col = 0; col < board.cols; col++) {
+                        const i = cellIndex(board, col, row)
+                        ctx.fillStyle = board.cells[i] ? textOnCell : textOnEmpty
+                        ctx.fillText(String(countNeighbors(board, i)), (col + 0.5) * size, (row + 0.5) * size)
+                    }
+                }
             }
         }
-        setGrid(temp)
-        setRowSize(rows)
-        setColSize(cols)
+
+        const tick = (now: number) => {
+            frame = requestAnimationFrame(tick)
+            const board = boardRef.current
+            const state = live.current
+            const elapsed = now - last
+            last = now
+            if (!board) return
+            if (state.colorsDirty) readColors()
+
+            if (!state.pause && !drawingRef.current) {
+                const started = performance.now()
+                backlog += elapsed
+                let stepped = false
+                // A delay of zero runs until the budget is spent. Otherwise it runs what the clock owes.
+                while (state.delay === 0 || backlog >= state.delay) {
+                    for (let i = 0; i < STEPS_PER_CLOCK_CHECK && (state.delay === 0 || backlog >= state.delay); i++) {
+                        stepBoard(board, state.table, state.randomBirths)
+                        generationRef.current++
+                        backlog -= state.delay
+                    }
+                    stepped = true
+                    if (performance.now() - started > STEP_BUDGET_MS) {
+                        // Falling behind is dropped, so a hidden tab doesn't come back and race.
+                        backlog = 0
+                        break
+                    }
+                }
+                if (stepped) state.dirty = true
+            } else {
+                backlog = 0
+            }
+
+            if (state.dirty) {
+                paint(board)
+                state.dirty = false
+            }
+
+            if (now - statusAt >= STATUS_INTERVAL_MS) {
+                if (now - speedAt >= SPEED_WINDOW_MS) {
+                    speed = ((generationRef.current - speedGeneration) * 1000) / (now - speedAt)
+                    speedAt = now
+                    speedGeneration = generationRef.current
+                }
+                statusAt = now
+                setStatus({ generation: generationRef.current, alive: board.alive, speed })
+            }
+        }
+
+        frame = requestAnimationFrame(tick)
+        return () => cancelAnimationFrame(frame)
+    }, [])
+
+    // Drawing pauses the simulation only for as long as the pointer is down.
+    const cellAt = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const box = e.currentTarget.getBoundingClientRect()
+        return { col: Math.floor(((e.clientX - box.left) / box.width) * cols), row: Math.floor(((e.clientY - box.top) / box.height) * rows) }
     }
 
-    /**
-     * Advances the given grid state and returns the resulting array
-     * 
-     * @param grid grid to advance
-     * @returns a new grid one generation ahead of the passed grid
-     */
-    const advanceGrid = (grid: number[]) => {
-        return grid.map((cell, i) => {
-            const numNeighbors = getNumberOfAliveNeighbors(i);  
-            return getNewStateFromNeighbors(numNeighbors, cell)
-        })
+    const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const board = boardRef.current
+        if (!settings || !board) return
+        e.preventDefault()
+        e.currentTarget.setPointerCapture(e.pointerId)
+        const cell = cellAt(e)
+        setCell(board, cell.col, cell.row)
+        drawingRef.current = cell
+        live.current.dirty = true
     }
 
-    /**
-     * Returns the number of alive neighbors in the grid of the given index
-     * 
-     * @param index index of element in the array to check
-     */
-    const getNumberOfAliveNeighbors = (i: number) => {
-        let count = 0
-        // i - r - 1 | i - r | i - r + 1
-        //   i - 1   |   i   |   i + 1
-        // i + r - 1 | i + r | i + r + 1
-        const topLeft = i - rowSize - 1
-        const topMiddle = i - rowSize
-        const topRight = i - rowSize + 1
-        const left = i - 1
-        const right = i + 1
-        const bottomLeft = i + rowSize - 1
-        const bottomMiddle = i + rowSize
-        const bottomRight = i + rowSize + 1
-
-        if (topLeft >= 0 && i % rowSize !== 0 && grid[topLeft] === 1) {
-            count += 1
+    const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const board = boardRef.current
+        const from = drawingRef.current
+        if (!board || !from) return
+        const to = cellAt(e)
+        // Fills the line between events, because a fast drag skips over cells.
+        const steps = Math.max(Math.abs(to.col - from.col), Math.abs(to.row - from.row))
+        for (let i = 1; i <= steps; i++) {
+            setCell(board, Math.round(from.col + ((to.col - from.col) * i) / steps), Math.round(from.row + ((to.row - from.row) * i) / steps))
         }
-
-        if (topMiddle >= 0 && grid[topMiddle] === 1) {
-            count += 1
-        }
-
-        if (topRight >= 0 && i % rowSize !== rowSize - 1 && grid[topRight] === 1) {
-            count += 1
-        }
-
-        if (i % rowSize !== 0 && grid[left] === 1) {
-            count += 1
-        }
-
-        if (i % rowSize !== rowSize - 1 && grid[right] === 1) {
-            count += 1
-        }
-
-        if (bottomLeft < rowSize * colSize && i % rowSize !== 0 && grid[bottomLeft] === 1) {
-            count += 1
-        }
-
-        if (bottomMiddle < rowSize * colSize && grid[bottomMiddle] === 1) {
-            count += 1
-        }
-
-        if ((bottomRight < rowSize * colSize) && i % rowSize !== rowSize - 1 && grid[bottomRight] === 1) {
-            count += 1
-        }
-
-        return count
+        drawingRef.current = to
+        live.current.dirty = true
     }
 
-
-    /**
-     * Given the number of neighbors and current state determines whether or not the new state should be alive of dead
-     * @param neighbors 
-     * @param curState 
-     * @returns 1 if cell should be active, 0 otherwise
-     */
-    const getNewStateFromNeighbors = (neighbors: number, curState: number) => {
-        let newState = curState
-        if (curState === 1 && (neighbors < underpopulatedThreshold || neighbors > overpopulatedThreshold)) {
-            newState = 0
-        } else if (curState === 0 && neighbors === reproductionThreshold) {
-            newState = 1
-        } else if (miracleOfLife && curState === 0) {
-            newState = Math.round(Math.random() - 0.49)
-        }
-        return newState
+    const handlePointerUp = () => {
+        drawingRef.current = null
     }
 
-
-    /**
-     * Updates the grid state based on a set of rules
-     */
-    const updateGrid = () => {
-        setGrid((grid) => advanceGrid(grid))
-    }
-
-    /**
-     * Restores all relevant settings to defaults
-     */
     const restoreToDefaults = () => {
         setDiagnostics(false)
         setColorSwap(false)
-        setMiracleOfLife(false)
+        setRandomBirths(false)
         setPause(false)
-        setOverpopulatedThreshold(3)
-        setUnderpopulatedThreshold(2)
-        setReproductionThreshold(3)
-        setSparsity(-0.3)
-        setResolution(15)
-        setTickRate(75)
-        setActiveColor('bg-blue-400')
-        setDrawing(false)
         setRounded(false)
+        setDelay(DEFAULTS.delay)
+        setDensity(DEFAULTS.density)
+        setCellSize(DEFAULTS.cellSize)
+        setSurviveMin(DEFAULTS.surviveMin)
+        setSurviveMax(DEFAULTS.surviveMax)
+        setBirth(DEFAULTS.birth)
+        setActiveColor('accent')
     }
 
-    /**
-     * Handles a mouse down event on a cell by triggering drawing mode
-     */
-    const handleMouseDown = (e: any, i: number) => {
-        e.preventDefault()
-        setDrawing(true)
-        
-        setPause(true)
+    const toggles = [
+        { id: 'pause', label: 'Pause', checked: pause, onChange: setPause },
+        { id: 'randomBirths', label: 'Random births', checked: randomBirths, onChange: setRandomBirths },
+        { id: 'colorSwap', label: 'Invert colors', checked: colorSwap, onChange: setColorSwap },
+        { id: 'rounded', label: 'Round cells', checked: rounded, onChange: setRounded },
+        { id: 'diagnostics', label: 'Neighbor counts', checked: diagnostics, onChange: setDiagnostics },
+    ]
 
-        setGrid((grid) => {
-            const newGrid = [...grid]
-            newGrid[i] = 1
-            return newGrid
-        })
-    }
+    const neighbors = (value: number) => `${value} neighbor${value === 1 ? '' : 's'}`
 
-    /**
-     * Handles a mouse movement event by drawing cells as active if in drawing mode
-     */
-    const handleMouseMove = (e: any, i: number) => {
-        e.preventDefault()
-        if (drawing) {
-            setGrid((grid) => {
-                const newGrid = [...grid]
-                newGrid[i] = 1
-                return newGrid
-            })
-        }
-    }
-
-    const handleMouseUp = (e: any) => {
-        e.preventDefault()
-        setDrawing(false)
-        setPause(prevPause)
-    }
-
-    /**
-     * Reinitialize the grid on dimension changes
-     */
-    useEffect(() => {
-        initGrid()
-    }, [width, height, sparsity, resolution])
-
-
-    /**
-     * Sets an interval to update the grid on 
-     */
-    useEffect(() => {
-        const iid = setInterval(() => {
-            if (!pause) {
-                updateGrid();
-            }
-        }, tickRate);
-
-        return () => clearInterval(iid);
-    }, [rowSize, colSize, updateGrid, tickRate, pause])
-
-    const gridCells = useMemo(() => {
-        return grid.map((cell, i) => {
-            const bgColor = cell === 1 ? (colorSwap ? 'bg-white' : activeColor) : (colorSwap ? activeColor : 'bg-white');
-            const textColor = cell === 1 ? (colorSwap ? activeTextColor : 'text-white') : (colorSwap ? 'text-white' : activeTextColor);
-            return (
-                <div 
-                    key={i} 
-                    className={`flex ${rounded ? 'rounded-full' : ''} justify-center items-center ${bgColor} ${textColor}`} 
-                    style={{ width: `${resolution}px`, height: `${resolution}px`}}
-                    onMouseDown={(e) => handleMouseDown(e, i)}
-                    onMouseUp={(e) => handleMouseUp(e)} 
-                    onMouseMove={(e) => handleMouseMove(e, i)} 
-                    onTouchStart={(e) => handleMouseDown(e, i)}
-                    onTouchMove={(e) => handleMouseMove(e, i)}
-                    onTouchEnd={(e) => handleMouseUp(e)}
-                >
-                    {diagnostics && getNumberOfAliveNeighbors(i)}
-                </div>
-            );
-        });
-    }, [grid, diagnostics, resolution, colorSwap, rounded, activeColor, activeTextColor]);
+    const sliders = [
+        { id: 'cellSize', label: 'Cell size', shown: `${cellSize}px`, value: cellSize, min: 10, max: 20, step: 1, onChange: setCellSize },
+        { id: 'delay', label: 'Delay between generations', shown: delay === 0 ? 'None' : `${delay}ms`, value: delay, min: 0, max: 500, step: 1, onChange: setDelay },
+        { id: 'density', label: 'Starting density', shown: `${density}%`, value: density, min: 0, max: 100, step: 1, onChange: setDensity },
+        { id: 'surviveMin', label: 'Survives with at least', shown: neighbors(surviveMin), value: surviveMin, min: 0, max: 8, step: 1, onChange: setSurviveMin },
+        { id: 'surviveMax', label: 'Survives with at most', shown: neighbors(surviveMax), value: surviveMax, min: 0, max: 8, step: 1, onChange: setSurviveMax },
+        { id: 'birth', label: 'Born with exactly', shown: neighbors(birth), value: birth, min: 0, max: 8, step: 1, onChange: setBirth },
+    ]
 
     return (
-        <div className={`w-screen h-screen flex justify-center items-center ${colorSwap ? activeColor : 'bg-white'}`} onMouseDown={(e) => e.preventDefault()} onMouseMove={(e) => e.preventDefault()} onMouseUp={(e) => {e.preventDefault(); setDrawing(false)}}>
-            {
-                settings && !settingsOpen && 
-                <div className="flex justify-between gap-2 absolute top-0 left-0 mx-20 my-10 z-50">
-                    <button className="hover-enlarge-sm border border-black border-2 bg-sky-400 opacity-90 px-1 " onClick={() => setSettingsOpen(true)}>
-                        Open Settings
-                    </button>
-                </div>
-            }
-            { 
-                settings && settingsOpen && 
-                <div className={`absolute top-0 left-0 px-10 py-5 mx-10 my-5 z-50 bg-white opacity-90 w-72 md:w-96`}>
-                    <div className="flex justify-between items-center pb-2">
-                        <button title="Close Settings" className="hover-enlarge-sm border border-black border-2 px-1 bg-purple-700" onClick={() => setSettingsOpen(false)}>
-                            X
-                        </button>
-                        <div className="w-full h-full flex justify-end gap-2">
-                            <a title="Go Back Home" className='hover-enlarge-sm bg-amber-300 opacity-90 border border-black border-2 px-1' href="/">
-                                Home
-                            </a>
+        <div
+            className="relative flex h-screen w-screen items-center justify-center overflow-hidden"
+            style={{ backgroundColor: colorSwap ? cellColor(activeColor) : undefined }}
+        >
+            <canvas
+                ref={canvasRef}
+                aria-label={`Game of Life, ${cols} by ${rows} cells`}
+                role="img"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                className={`relative z-0 touch-none ${settings ? 'cursor-crosshair' : ''}`}
+                style={{ width: cols * cellSize, height: rows * cellSize, imageRendering: detailed ? 'auto' : 'pixelated' }}
+            />
+
+            {settings && (
+                <>
+                    <CornerBrackets size={24} offset={16} className="z-20 text-m-fg/60" />
+
+                    <div className="absolute left-0 right-0 top-0 z-30 flex items-start justify-between gap-4 p-6 md:p-10">
+                        <div className="flex flex-col gap-3">
+                            <Link href="/showcase" className="self-start">
+                                <Label className="hover:text-m-fg">&larr; Showcase</Label>
+                            </Link>
+                            <Label index="01" tone="fg">Cellular automata</Label>
+                        </div>
+                        {!settingsOpen && (
+                            <Button variant="outline" size="sm" className="bg-m-bg/80 backdrop-blur" onClick={() => setSettingsOpen(true)}>
+                                Settings
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="pointer-events-none absolute bottom-0 left-0 z-30 flex flex-col gap-4 p-6 md:p-10">
+                        <Display as="h1" size="xl" slop="conway" className="drop-shadow-[0_2px_12px_rgb(var(--m-bg))]">
+                            Game of Life
+                        </Display>
+                        <div className="flex flex-wrap gap-6 bg-m-bg/70 px-3 py-2 backdrop-blur">
+                            <Label>Gen <span className="text-m-fg">{String(status.generation).padStart(5, '0')}</span></Label>
+                            <Label>Alive <span className="text-m-fg">{status.alive}</span></Label>
+                            <Label>Grid <span className="text-m-fg">{cols}x{rows}</span></Label>
+                            <Label>Speed <span className="text-m-fg">{Math.round(status.speed)} gen/s</span></Label>
+                            <Label>
+                                Rules <span className="text-m-fg">B{birth}/S{surviveMin}-{surviveMax}</span>
+                            </Label>
                         </div>
                     </div>
-                    <div className="flex justify-between items-center gap-2">
-                        <button className={`hover-enlarge-sm border border-black ${activeColor === 'bg-red-400' ? 'border-4' : 'border-2'} bg-red-400 w-1/4 h-6`} onClick={() => {setActiveColor('bg-red-400'); setActiveTextColor('text-red-400')}}/>
-                        <button className={`hover-enlarge-sm border border-black ${activeColor === 'bg-blue-400' ? 'border-4' : 'border-2'} bg-blue-400 w-1/4 h-6`} onClick={() => {setActiveColor('bg-blue-400'); setActiveTextColor('text-blue-400')}}/>
-                        <button className={`hover-enlarge-sm border border-black ${activeColor === 'bg-emerald-400' ? 'border-4' : 'border-2'} bg-emerald-400 w-1/4 h-6`} onClick={() => {setActiveColor('bg-emerald-400'); setActiveTextColor('text-emerald-400')}}/>
-                        <button className={`hover-enlarge-sm border border-black ${activeColor === 'bg-yellow-400' ? 'border-4' : 'border-2'} bg-yellow-400 w-1/4 h-6`} onClick={() => {setActiveColor('bg-yellow-400'); setActiveTextColor('text-yellow-400')}}/>
-                        <button className={`hover-enlarge-sm border border-black ${activeColor === 'bg-black' ? 'border-4' : 'border-2'} bg-black w-1/4 h-6`} onClick={() => {setActiveColor('bg-black'); setActiveTextColor('text-black')}}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2">
-                        <span>Pause:</span>
-                        <Checkbox id="pause" checked={pause} onCheckedChange={(checked) => {setPause(Boolean(checked)); setPrevPause(Boolean(checked))}}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2">
-                        <span>Diagnostics:</span>
-                        {diagnostics && <div className="hidden md:block">{width}px by {height}px</div>}
-                        <Checkbox id="diagnostics" checked={diagnostics} onCheckedChange={(checked) => setDiagnostics(Boolean(checked))}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2">
-                        <span>Swap Colors:</span>
-                        <Checkbox id="colorSwap" checked={colorSwap} onCheckedChange={(checked) => setColorSwap(Boolean(checked))}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2">
-                        <span>Miracle of Life:</span>
-                        <Checkbox id="miracleOfLife" checked={miracleOfLife} onCheckedChange={(checked) => setMiracleOfLife(Boolean(checked))}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2">
-                        <span>Rounded:</span>
-                        <Checkbox id="rounded" checked={rounded} onCheckedChange={(checked) => setRounded(Boolean(checked))}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Resolution: {resolution}</span>
-                        <Slider value={[resolution]} className="w-full md:w-3/5" id="resolution" defaultValue={[resolution]} max={20} min={10} step={1} onValueChange={(value) => setResolution(value[0])}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Tick Rate: {tickRate}</span>
-                        <Slider value={[tickRate]} className="w-full md:w-3/5" id="tickRate" defaultValue={[tickRate]} max={500} min={1} step={1} onValueChange={(value) => setTickRate(value[0])}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Sparsity: {sparsity}</span>
-                        <Slider value={[sparsity]} className="w-full md:w-3/5" id="sparsity" defaultValue={[sparsity]} max={0.5} min={-0.5} step={0.01} onValueChange={(value) => setSparsity(value[0])}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Competition: {overpopulatedThreshold}</span>
-                        <Slider value={[overpopulatedThreshold]} className="w-full md:w-3/5" id="competition" defaultValue={[overpopulatedThreshold]} max={8} min={0} step={1} onValueChange={(value) => setOverpopulatedThreshold(value[0])}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Opportunity: {underpopulatedThreshold}</span>
-                        <Slider value={[underpopulatedThreshold]} className="w-full md:w-3/5" id="opportunity" defaultValue={[underpopulatedThreshold]} max={8} min={0} step={1} onValueChange={(value) => setUnderpopulatedThreshold(value[0])}/>
-                    </div>
-                    <div className="flex flex-col md:flex-row justify-between w-full items-center gap-2">
-                        <span className="w-full md:w-2/5">Reproduction: {reproductionThreshold}</span>
-                        <Slider value={[reproductionThreshold]} className="w-full md:w-3/5" id="reproduction" defaultValue={[reproductionThreshold]} max={8} min={0} step={1} onValueChange={(value) => setReproductionThreshold(value[0])}/>
-                    </div>
-                    <div className="flex justify-between w-full items-center gap-2 pt-2">
-                        <span className="w-full md:w-2/5">Cells Alive: {grid.reduce((count, cell) => count + (cell === 1 ? 1 : 0), 0)}</span>
-                        <button title="Reset to Settings to Default Values" className="border border-black border-2 p-1 w-full md:w-3/5 bg-rose-300 hover-enlarge-sm" onClick={restoreToDefaults}>
-                            Reset to Defaults
-                        </button>
-                    </div>
-                </div>
-            }
-            <div className={`flex flex-wrap z-0 relative justify-center items-center`}>
-                {gridCells}
-            </div>
+
+                    {settingsOpen && (
+                        <Panel
+                            label="Settings"
+                            index="02"
+                            meta={pause ? 'Paused' : 'Running'}
+                            accent
+                            className="absolute right-4 top-4 z-40 w-[calc(100%-2rem)] bg-m-surface/95 backdrop-blur sm:w-96 md:right-10 md:top-10"
+                            bodyClassName="flex flex-col gap-5"
+                        >
+                            <div className="flex flex-col gap-2">
+                                <Label>Cell color</Label>
+                                <div className="flex gap-2">
+                                    {cellColors.map((color) => (
+                                        <button
+                                            key={color}
+                                            title={color}
+                                            aria-label={`Use ${color} cells`}
+                                            className={`h-6 flex-1 transition-transform hover:-translate-y-0.5 ${activeColor === color ? 'outline outline-2 outline-offset-2 outline-m-fg' : ''}`}
+                                            style={{ backgroundColor: cellColor(color) }}
+                                            onClick={() => setActiveColor(color)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                                {toggles.map(({ id, label, checked, onChange }) => (
+                                    <label key={id} htmlFor={id} className="m-0 flex cursor-pointer items-center gap-2 text-base">
+                                        <Checkbox id={id} checked={checked} onCheckedChange={(value) => onChange(Boolean(value))}/>
+                                        <Label tone="fg">{label}</Label>
+                                    </label>
+                                ))}
+                            </div>
+                            {randomBirths && <Label>Each dead cell has a 1% chance of life every generation</Label>}
+                            {diagnostics && <Label>Neighbor counts are slower to draw</Label>}
+
+                            <Hazard className="h-1 text-m-line/30" />
+
+                            <div className="flex flex-col gap-4">
+                                {sliders.map(({ id, label, shown, value, min, max, step, onChange }) => (
+                                    <div key={id} className="flex flex-col gap-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label>{label}</Label>
+                                            <Label tone="accent">{shown}</Label>
+                                        </div>
+                                        <Slider id={id} aria-label={label} value={[value]} min={min} max={max} step={step} onValueChange={(v) => onChange(v[0])}/>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <Label>Changing cell size or density starts a new board{" // "}Drag on the board to draw</Label>
+
+                            <div className="flex gap-2 pt-2">
+                                <Button size="sm" variant="outline" className="flex-1" title="Reset settings to their defaults" onClick={restoreToDefaults}>
+                                    Reset
+                                </Button>
+                                <Button size="sm" className="flex-1" onClick={() => setSettingsOpen(false)}>
+                                    Close
+                                </Button>
+                            </div>
+                        </Panel>
+                    )}
+                </>
+            )}
         </div>
     )
 };

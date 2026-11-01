@@ -1,46 +1,16 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { getAllPosts } from "./api"
-
-const bgColors = [
-  "bg-red-300",
-  "bg-blue-300",
-  "bg-green-300",
-  "bg-yellow-300",
-  "bg-purple-300",
-  "bg-pink-300",
-  "bg-indigo-300",
-  "bg-teal-300",
-  "bg-orange-300",
-  "bg-gray-300",
-  "bg-lime-300",
-  "bg-emerald-300",
-  "bg-cyan-300",
-  "bg-sky-300",
-  "bg-violet-300",
-  "bg-fuchsia-300",
-  "bg-rose-300",
-  "bg-amber-300",
-  "bg-lime-400",
-  "bg-emerald-400"
-]
-
-const links = [
-  "/showcase/conway",
-  "/blog/conway",
-  "/blog/helloworld"
-]
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getRandomBgColor() {
-  const bgColor: any = bgColors[Math.floor(Math.random() * bgColors.length)];
-  return bgColor
-}
+export type RandomLinks = { blog: string[]; showcase: string[] }
 
-export function getRandomLink() {
-  const link: any = links[Math.floor(Math.random() * links.length)]
-  return link
+// Picks the blog or the showcase evenly, then a page within it, so the showcase's many games don't crowd out the posts.
+export function getRandomLink({ blog, showcase }: RandomLinks, current: string, random: () => number = Math.random) {
+  const pick = (links: string[]) => links[Math.floor(random() * links.length)]
+  const others = (links: string[]) => links.filter((link) => link !== current)
+  const [first, second] = random() < 0.5 ? [blog, showcase] : [showcase, blog]
+  return pick(others(first).length ? others(first) : others(second))
 }
