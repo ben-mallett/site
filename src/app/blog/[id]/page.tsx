@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { PageShell } from '@/components/PageShell'
 import { Barcode, CellReveal, Display, Hazard, Label, Tag } from '@/components/theme'
+import { HoldemMath } from '@/components/casinoMath/HoldemMath'
 import { getPostById, getAllPosts, getSeriesTitle } from '@/lib/api'
  
 // Posts whose body needs live tables and charts, shown after the written part.
@@ -8,6 +9,7 @@ const POST_SECTIONS: Record<string, () => JSX.Element> = {
   // Video poker
   // Blackjack
   // Hold-em
+  'texas-hold-em-math': HoldemMath,
 }
 
 export async function generateStaticParams() {

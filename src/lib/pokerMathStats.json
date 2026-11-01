@@ -1,0 +1,95 @@
+{
+  "classes": [
+    "High card",
+    "One pair",
+    "Two pair",
+    "Three of a kind",
+    "Straight",
+    "Flush",
+    "Full house",
+    "Four of a kind",
+    "Straight flush",
+    "Royal flush"
+  ],
+  "five": [
+    1302540,
+    1098240,
+    123552,
+    54912,
+    10200,
+    5108,
+    3744,
+    624,
+    36,
+    4
+  ],
+  "distinctFive": 7462,
+  "seven": [
+    23294460,
+    58627800,
+    31433400,
+    6461620,
+    6180020,
+    4047644,
+    3473184,
+    224848,
+    37260,
+    4324
+  ],
+  "matchups": [
+    {
+      "label": "AA vs KK",
+      "note": "Higher pair against lower pair",
+      "win": 0.8106457731804633,
+      "tie": 0.003818247227127893,
+      "lose": 0.18553597959240883,
+      "equity": 0.8125548967940273,
+      "boards": 1712304
+    },
+    {
+      "label": "QQ vs AK offsuit",
+      "note": "Pair against two overcards",
+      "win": 0.5699390995991366,
+      "tie": 0.003418785449312739,
+      "lose": 0.42664211495155063,
+      "equity": 0.571648492323793,
+      "boards": 1712304
+    },
+    {
+      "label": "QQ vs AK suited",
+      "note": "Same, with flush chances",
+      "win": 0.5358896551079715,
+      "tie": 0.00393154486586494,
+      "lose": 0.46017880002616357,
+      "equity": 0.537855427540904,
+      "boards": 1712304
+    },
+    {
+      "label": "22 vs AK offsuit",
+      "note": "The smallest pair is still ahead",
+      "win": 0.527499205748512,
+      "tie": 0.0058085480148384865,
+      "lose": 0.46669224623664957,
+      "equity": 0.5304034797559312,
+      "boards": 1712304
+    },
+    {
+      "label": "AK vs AQ",
+      "note": "A dominated hand",
+      "win": 0.7172102617292256,
+      "tie": 0.04590189592502266,
+      "lose": 0.2368878423457517,
+      "equity": 0.7401612096917369,
+      "boards": 1712304
+    },
+    {
+      "label": "AK vs 76 suited",
+      "note": "Two overcards against connectors",
+      "win": 0.5755490847419618,
+      "tie": 0.0038135751595511076,
+      "lose": 0.4206373400984872,
+      "equity": 0.5774558723217372,
+      "boards": 1712304
+    }
+  ]
+}
