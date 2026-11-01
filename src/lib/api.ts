@@ -10,6 +10,8 @@ import remarkBreaks from 'remark-breaks'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import rehypePrettyCode from 'rehype-pretty-code'
+import { remarkEmbed } from './automatonEmbed'
+import { EMBED_BLOCKS } from './embeds'
 import type { RandomLinks } from './utils'
 
 const postsDir = path.join(process.cwd(), '_posts')
@@ -19,10 +21,12 @@ const getPosts = () => {
 }
 
 const getParser = () => {
-  return unified()
+  const markdown = unified()
     .use(remarkParse)
     .use(remarkBreaks)  
     .use(remarkGfm) 
+  return Object.entries(EMBED_BLOCKS)
+    .reduce((chain, [lang, render]) => chain.use(remarkEmbed(lang, render)), markdown as any)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypePrettyCode, {
         theme: 'one-dark-pro',
@@ -80,6 +84,10 @@ export async function getAllPosts() {
 
 // Articles that belong together. A post joins one with the series and seriesOrder fields in its front matter.
 const SERIES: Record<string, { title: string; description: string }> = {
+    "cellular-automata": {
+        title: "Cellular Automata",
+        description: "How far can simple local rules go? From a single row of cells to the Game of Life to a world of falling sand.",
+    },
     "casino-mathematics": {
         title: "Casino Mathematics",
         description: "Casino games look like luck, but a surprising amount of each one can be counted. Three articles, and games to test the numbers on.",
@@ -119,8 +127,17 @@ const item = (title: string, description: string, slug: string): ShowcaseItem =>
 
 const SHOWCASE: ShowcaseEntry[] = [
     {
-        kind: "item",
-        item: item("Game of Life", "A unique plaground showcasing John Conway's famous 'Game of Life', and some of the emergent behavior that happens when you change the rules.", "conway"),
+        kind: "category",
+        id: "cellular-automata",
+        title: "Cellular Automata",
+        description: "Simple local rules run over and over, on a single row, on a grid, and in a world of falling sand.",
+        countLabel: "4 demos",
+        items: [
+            item("Elementary Automata", "Run any of the 256 rules for a single row of cells, and watch each generation stack under the last.", "elementary-automata"),
+            item("Game of Life", "A unique plaground showcasing John Conway's famous 'Game of Life', and some of the emergent behavior that happens when you change the rules.", "conway"),
+            item("Falling Sands", "Pour sand, water and stone, and grow Game of Life patterns in the same world.", "falling-sands"),
+            item("Rule Catalog", "All 256 elementary rules side by side, each shown for steps 0 to 99.", "elementary-catalog"),
+        ],
     },
     // Video poker
     // Blackjack

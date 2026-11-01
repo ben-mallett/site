@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AutomatonRunner } from '@/components/AutomatonRunner'
 import { PageShell } from '@/components/PageShell'
 import { Barcode, CellReveal, Display, Hazard, Label, Tag } from '@/components/theme'
 import { getPostById, getAllPosts, getSeriesTitle } from '@/lib/api'
@@ -53,6 +54,7 @@ export default async function Post({ params: { id } } : { params: { id: string }
                     <Hazard className="h-1.5 text-m-accent" />
                 </CellReveal>
                 <div className="m-prose" dangerouslySetInnerHTML={{ __html: html }} />
+                <AutomatonRunner />
                 {Sections && <Sections />}
                 {post.series && (
                   <nav aria-label="More in this series" className="flex flex-wrap justify-between gap-4 border-t border-m-line/20 pt-5">
