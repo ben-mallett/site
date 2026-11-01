@@ -1,0 +1,379 @@
+{
+  "jacks-or-better": {
+    "return": 0.9954390436988689,
+    "standardDeviation": 4.417541898731187,
+    "hitFrequency": 0.4545653307759262,
+    "hands": [
+      {
+        "id": "royal",
+        "name": "Royal flush",
+        "pays": 800,
+        "probability": 0.000024758268037569952,
+        "share": 0.019806614430055963
+      },
+      {
+        "id": "straight-flush",
+        "name": "Straight flush",
+        "pays": 50,
+        "probability": 0.0001093090903716158,
+        "share": 0.00546545451858079
+      },
+      {
+        "id": "four",
+        "name": "Four of a kind",
+        "pays": 25,
+        "probability": 0.002362545685840057,
+        "share": 0.05906364214600142
+      },
+      {
+        "id": "full-house",
+        "name": "Full house",
+        "pays": 9,
+        "probability": 0.011512207336231773,
+        "share": 0.10360986602608596
+      },
+      {
+        "id": "flush",
+        "name": "Flush",
+        "pays": 6,
+        "probability": 0.011014510968029844,
+        "share": 0.06608706580817907
+      },
+      {
+        "id": "straight",
+        "name": "Straight",
+        "pays": 4,
+        "probability": 0.011229367241326551,
+        "share": 0.044917468965306205
+      },
+      {
+        "id": "trips",
+        "name": "Three of a kind",
+        "pays": 3,
+        "probability": 0.0744486985739498,
+        "share": 0.22334609572184938
+      },
+      {
+        "id": "two-pair",
+        "name": "Two pair",
+        "pays": 2,
+        "probability": 0.12927890247764506,
+        "share": 0.2585578049552901
+      },
+      {
+        "id": "jacks",
+        "name": "Jacks or better",
+        "pays": 1,
+        "probability": 0.21458503112752003,
+        "share": 0.21458503112752003
+      }
+    ]
+  },
+  "double-double-bonus": {
+    "return": 0.9898078348767732,
+    "standardDeviation": 6.479581877887529,
+    "hitFrequency": 0.44716306608376977,
+    "hands": [
+      {
+        "id": "royal",
+        "name": "Royal flush",
+        "pays": 800,
+        "probability": 0.00002451021170786961,
+        "share": 0.019608169366295686
+      },
+      {
+        "id": "four-aces-kicker",
+        "name": "Four aces + 2-4",
+        "pays": 400,
+        "probability": 0.00006159019226413189,
+        "share": 0.024636076905652754
+      },
+      {
+        "id": "four-2-4-kicker",
+        "name": "Four 2-4 + A-4",
+        "pays": 160,
+        "probability": 0.0001431965606139549,
+        "share": 0.022911449698232784
+      },
+      {
+        "id": "four-aces",
+        "name": "Four aces + 5-K",
+        "pays": 160,
+        "probability": 0.00017358004850121991,
+        "share": 0.027772807760195188
+      },
+      {
+        "id": "four-2-4",
+        "name": "Four 2-4 + 5-K",
+        "pays": 80,
+        "probability": 0.0003844055387491455,
+        "share": 0.03075244309993164
+      },
+      {
+        "id": "straight-flush",
+        "name": "Straight flush",
+        "pays": 50,
+        "probability": 0.00010961183026102454,
+        "share": 0.005480591513051227
+      },
+      {
+        "id": "four-5-k",
+        "name": "Four 5-K",
+        "pays": 50,
+        "probability": 0.0016301714076781821,
+        "share": 0.0815085703839091
+      },
+      {
+        "id": "full-house",
+        "name": "Full house",
+        "pays": 9,
+        "probability": 0.010860004343428068,
+        "share": 0.09774003909085262
+      },
+      {
+        "id": "flush",
+        "name": "Flush",
+        "pays": 6,
+        "probability": 0.011358532523078573,
+        "share": 0.06815119513847144
+      },
+      {
+        "id": "straight",
+        "name": "Straight",
+        "pays": 4,
+        "probability": 0.012766256895496656,
+        "share": 0.051065027581986625
+      },
+      {
+        "id": "trips",
+        "name": "Three of a kind",
+        "pays": 3,
+        "probability": 0.075265128905576,
+        "share": 0.225795386716728
+      },
+      {
+        "id": "two-pair",
+        "name": "Two pair",
+        "pays": 1,
+        "probability": 0.12306359506401178,
+        "share": 0.12306359506401178
+      },
+      {
+        "id": "jacks",
+        "name": "Jacks or better",
+        "pays": 1,
+        "probability": 0.21132248255745428,
+        "share": 0.21132248255745428
+      }
+    ]
+  },
+  "deuces-wild": {
+    "return": 1.007619612039064,
+    "standardDeviation": 5.083066643544734,
+    "hitFrequency": 0.45310161100784796,
+    "hands": [
+      {
+        "id": "natural-royal",
+        "name": "Natural royal",
+        "pays": 800,
+        "probability": 0.000022083864209496888,
+        "share": 0.01766709136759751
+      },
+      {
+        "id": "four-deuces",
+        "name": "Four deuces",
+        "pays": 200,
+        "probability": 0.00020370319906185824,
+        "share": 0.040740639812371644
+      },
+      {
+        "id": "wild-royal",
+        "name": "Wild royal",
+        "pays": 25,
+        "probability": 0.0017958432610814977,
+        "share": 0.04489608152703744
+      },
+      {
+        "id": "five",
+        "name": "Five of a kind",
+        "pays": 15,
+        "probability": 0.0032016039648043756,
+        "share": 0.04802405947206564
+      },
+      {
+        "id": "straight-flush",
+        "name": "Straight flush",
+        "pays": 9,
+        "probability": 0.004169019031212922,
+        "share": 0.0375211712809163
+      },
+      {
+        "id": "four",
+        "name": "Four of a kind",
+        "pays": 5,
+        "probability": 0.06493816591717563,
+        "share": 0.32469082958587814
+      },
+      {
+        "id": "full-house",
+        "name": "Full house",
+        "pays": 3,
+        "probability": 0.02122913778950314,
+        "share": 0.06368741336850942
+      },
+      {
+        "id": "flush",
+        "name": "Flush",
+        "pays": 2,
+        "probability": 0.016800024837630337,
+        "share": 0.033600049675260674
+      },
+      {
+        "id": "straight",
+        "name": "Straight",
+        "pays": 2,
+        "probability": 0.056050246804214894,
+        "share": 0.11210049360842979
+      },
+      {
+        "id": "trips",
+        "name": "Three of a kind",
+        "pays": 1,
+        "probability": 0.28469178234099735,
+        "share": 0.28469178234099735
+      }
+    ]
+  },
+  "bonus-base": {
+    "return": 0.9801469405684908,
+    "standardDeviation": 4.555631485725431,
+    "hitFrequency": 0.45512831057866665,
+    "hands": [
+      {
+        "id": "royal",
+        "name": "Royal flush",
+        "pays": 800,
+        "probability": 0.00002485448786496998,
+        "share": 0.019883590291975985
+      },
+      {
+        "id": "four-aces",
+        "name": "Four aces",
+        "pays": 80,
+        "probability": 0.0001958355649684405,
+        "share": 0.01566684519747524
+      },
+      {
+        "id": "straight-flush",
+        "name": "Straight flush",
+        "pays": 50,
+        "probability": 0.00010699386063701514,
+        "share": 0.005349693031850757
+      },
+      {
+        "id": "four-2-4",
+        "name": "Four 2-4",
+        "pays": 40,
+        "probability": 0.000527253020972616,
+        "share": 0.02109012083890464
+      },
+      {
+        "id": "four-5-k",
+        "name": "Four 5-K",
+        "pays": 25,
+        "probability": 0.0016391371437511682,
+        "share": 0.040978428593779204
+      },
+      {
+        "id": "full-house",
+        "name": "Full house",
+        "pays": 7,
+        "probability": 0.011511418318115767,
+        "share": 0.08057992822681037
+      },
+      {
+        "id": "flush",
+        "name": "Flush",
+        "pays": 5,
+        "probability": 0.010883658500249577,
+        "share": 0.054418292501247884
+      },
+      {
+        "id": "straight",
+        "name": "Straight",
+        "pays": 4,
+        "probability": 0.0112684707772728,
+        "share": 0.0450738831090912
+      },
+      {
+        "id": "trips",
+        "name": "Three of a kind",
+        "pays": 3,
+        "probability": 0.07443630920335845,
+        "share": 0.22330892761007534
+      },
+      {
+        "id": "two-pair",
+        "name": "Two pair",
+        "pays": 2,
+        "probability": 0.12926285147280148,
+        "share": 0.25852570294560295
+      },
+      {
+        "id": "jacks",
+        "name": "Jacks or better",
+        "pays": 1,
+        "probability": 0.21527152822167725,
+        "share": 0.21527152822167725
+      }
+    ]
+  },
+  "ultimate-x": {
+    "basePay": 0.974803249678093,
+    "averageMultiplier": 2.0378705175091003,
+    "return": 0.993261401445524
+  },
+  "ultimate-x-check": {
+    "basePay": 0.9801899581766927,
+    "averageMultiplier": 2.0278394807950963,
+    "return": 0.993833947934796
+  },
+  "worked-example": {
+    "dealt": [
+      "QS",
+      "JS",
+      "TS",
+      "4S",
+      "QH"
+    ],
+    "holds": [
+      {
+        "held": [
+          "QS",
+          "QH"
+        ],
+        "value": 1.5365402405180388,
+        "draws": 16215
+      },
+      {
+        "held": [
+          "TS",
+          "JS",
+          "QS"
+        ],
+        "value": 1.4320074005550416,
+        "draws": 1081
+      },
+      {
+        "held": [
+          "4S",
+          "TS",
+          "JS",
+          "QS"
+        ],
+        "value": 1.2553191489361701,
+        "draws": 47
+      }
+    ]
+  }
+}
